@@ -81,3 +81,19 @@ Google OAuth의 승인된 JavaScript 출처에는 `https://rireki-easy.pages.dev
 기존 Pages 프로젝트는 직접 업로드 방식이므로 Git 자동 배포 연결은 변경하지 않았습니다. 소스를 GitHub에 먼저 동기화하고 동일 소스의 빌드를 운영에 업로드했습니다. 비밀키·로컬 환경변수·소스 폴더는 배포 ZIP에 포함하지 않았습니다.
 
 이번 작업은 프론트엔드 공개 배포입니다. Supabase 마이그레이션·Edge Function 배포 및 한국어·영어 인증 복귀 URL 추가는 실행하지 않았습니다. 비회원 작성·브라우저 저장·파일 다운로드는 운영에서 확인했습니다.
+
+## 공개 베타 보완 배포 (2026-11-20)
+
+- 최종 배포 소스: `47679f6030f3e48f249b98066cbbd86cf31803d0` (`/deployment-info.json` 확인).
+- ZIP: `.deploy/rireki-launch-ready-final.zip`, 40개 파일. 기존 3개 언어 주소에 배포 완료.
+- 언어별 hreflang·공유 이미지·favicon·실제 HTTP 404 추가, 외부 폰트 요청 제거, UI 글자 대비와 로고 접근성 수정.
+- 전체 21개 테스트 파일/104개 테스트 통과, 빌드 성공, 운영 SEO 검증 스크립트 통과.
+- 운영 Supabase 마이그레이션 001–006 적용, 사용자 승인 후 Data API 활성화. 한국어·영어 인증 복귀 URL 추가 및 Google 실제 로그인 복귀 확인. 영어 가상 예제로 최초 저장·2초 자동 저장·클라우드 복원 확인.
+- SQL에서 3개 언어 저장·수정 충돌·계정 격리 검증 후 롤백. 운영 API에서도 익명 조회는 빈 배열, 익명 저장은 HTTP 401 확인.
+- `VITE_CLOUD_ENABLED=true`로 빌드. 다음 배포에도 이 환경 설정을 유지해야 합니다. AI·결제는 계속 비활성입니다.
+- Search Console 소유권 인증 및 사이트맵 제출 완료. Google의 사이트맵 읽기 실패와 색인 요청 일일 할당량 제한이 있어 검색 반영은 미완료입니다. 직접 조회와 Googlebot User-Agent 요청은 정상 XML/HTTP 200입니다.
+- 390×844 뷰포트에서 3개 언어 홈의 가로 넘침 없음. 실제 iPhone/Android 테스트는 별도 필요합니다.
+- 검증 화면: `docs/screenshots/launch-{japanese,korean,english}-mobile.jpg`, `launch-cloud-saved.jpg`.
+- 최종 운영 모바일 Lighthouse: 일본어 성능 100, 한국어 100, 영어 99. 접근성·Best Practices·SEO는 세 언어 모두 100. 실사용자 Core Web Vitals나 검색 순위 보장은 아닙니다.
+
+상세 검증 범위와 남은 운영 점검은 `docs/launch-readiness.md`에 기록했습니다. 위 내용은 이전 배포에서 보류했던 DB·인증 설정의 최신 상태입니다.
