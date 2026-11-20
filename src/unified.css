@@ -2,7 +2,7 @@
 :root {
   font-family: Inter, Pretendard, "Noto Sans JP", system-ui, "Yu Gothic", "Malgun Gothic", sans-serif;
   color: #1e293b;
-  --green: #3b82f6;
+  --green: #2563eb;
   --cream: #f8fafc;
   --line: #e2e8f0;
 }
@@ -18,10 +18,10 @@ body {
   font-size: 13px;
 }
 .btn-primary {
-  background: #3b82f6;
-  border-color: #3b82f6;
+  background: #2563eb;
+  border-color: #2563eb;
   color: #fff;
-  box-shadow: 0 3px 7px #3b82f61a;
+  box-shadow: 0 3px 7px #2563eb1a;
 }
 .btn-primary:hover {
   background: #2563eb;
@@ -42,7 +42,7 @@ body {
   color: #2563eb;
 }
 .brand-icon {
-  background: #3b82f6;
+  background: #2563eb;
   transform: none;
   border-radius: 10px 10px 10px 3px;
   width: 34px;
@@ -98,7 +98,7 @@ body {
   background-color: transparent;
 }
 .hero-badge > span {
-  background: #3b82f6;
+  background: #2563eb;
 }
 .hero-checks svg,
 .hero-template-link {
@@ -113,11 +113,11 @@ body {
 }
 .art-spark,
 .art-saved strong {
-  color: #3b82f6;
+  color: #2563eb;
 }
 .art-saved > span,
 .mini-progress > i {
-  background: #3b82f6;
+  background: #2563eb;
 }
 .trust-strip {
   background: #fff;
@@ -236,7 +236,7 @@ body {
   appearance: none;
   border: 0;
   border-radius: 4px;
-  accent-color: #3b82f6;
+  accent-color: #2563eb;
   margin-top: 9px;
   overflow: hidden;
   background: #e2e8f0;
@@ -245,7 +245,7 @@ body {
   background: #e2e8f0;
 }
 .unified-intro progress::-webkit-progress-value {
-  background: #3b82f6;
+  background: #2563eb;
   border-radius: 4px;
 }
 .unified-draft-meta {
@@ -381,8 +381,8 @@ body {
 .unified-builder .field textarea:focus,
 .unified-builder .field select:focus {
   outline: 0;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px #3b82f621;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px #2563eb21;
 }
 .unified-builder .field em {
   font-size: 10px;
@@ -465,7 +465,7 @@ body {
 }
 .unified-builder .add-entry:hover {
   background: #eff6ff;
-  border-color: #3b82f6;
+  border-color: #2563eb;
 }
 .unified-builder .download-buttons {
   margin-top: 24px;
@@ -497,7 +497,7 @@ body {
 }
 .unified-builder .workspace-card progress,
 .unified-builder .consent-line input {
-  accent-color: #3b82f6;
+  accent-color: #2563eb;
 }
 .unified-preview {
   position: sticky;
@@ -567,7 +567,7 @@ body {
   font-size: 12px;
 }
 .unified-preview-caption svg {
-  color: #3b82f6;
+  color: #2563eb;
   margin-right: 8px;
 }
 .unified-nudge {
@@ -657,7 +657,7 @@ body {
 .folio-accent {
   width: 42px;
   height: 5px;
-  background: #3b82f6;
+  background: #2563eb;
   margin-bottom: 28px;
 }
 .folio-document .folio-identity {
@@ -1022,8 +1022,8 @@ html {
   color: #1e293b;
 }
 .auth-dialog .field input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px #3b82f621;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px #2563eb21;
 }
 @media (max-width: 800px) {
   .unified-mobile-toggle.btn-primary:hover:not(:disabled) {

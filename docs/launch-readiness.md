@@ -9,7 +9,8 @@
 - Applied migrations 001–006 together in a transaction to the previously empty production public schema. All five tables have RLS enabled. Commerce and AI remain disabled.
 - Production SQL verification (`scripts/verify-cloud.sql`): three-market saves, stale-revision conflicts, cross-account read isolation, no direct authenticated writes, no anonymous save RPC. All synthetic test writes rolled back.
 - Local build now uses `VITE_CLOUD_ENABLED=true`. First explicit cloud save/load opts into debounced autosave; local drafts are not uploaded simply by opening the editor. Keep this flag in future production build environments.
-- Added a Google Search Console HTML ownership verification file. Ownership verification and sitemap submission require checking the deployed file.
+- Verified Google Search Console ownership using the deployed HTML file and submitted `/sitemap.xml`. Google initially reports that it cannot read the sitemap, while direct HTTP and Googlebot user-agent checks return 200 with valid XML. A manual indexing request was rejected by Google's daily quota; indexing remains unconfirmed.
+- With user confirmation, enabled the previously disabled Supabase Data API. The disabled setting caused PGRST002 responses despite the schema being correct. Verified live English Google OAuth return, first cloud save, two-second autosave, and loading the saved cloud content after replacing the local field. Only fictional example data was used.
 
 ## Verification tools
 
@@ -17,7 +18,7 @@
 
 Baseline production English mobile Lighthouse: performance 83, accessibility 95, best practices 100, SEO 100. Updated local build: 100/100/100/100. Production remeasurement is recorded in deployment notes after release. Lighthouse scores are lab measurements, not field Core Web Vitals or ranking guarantees.
 
-The full suite initially passed 103/104 after the accessibility fix; the single failure expected the old logo name. Its corrected three-test file passes, covering all 104 tests across those runs.
+The complete suite passed: 21 files, 104 tests. Further Japanese/Korean contrast adjustments only change CSS colors.
 
 ## Remaining operational checks
 
