@@ -16,7 +16,7 @@ afterEach(cleanup);
 it('publishes 18 original templates with complete English home copy and active country navigation', () => {
   const { container } = render(<StaticLanding locale="en" />);
   expect(container.querySelectorAll('.en-template-card')).toHaveLength(18);
-  expect(screen.getAllByRole('link', { name: 'Folio.', exact: true }).length).toBeGreaterThan(0);
+  expect(screen.getAllByRole('link', { name: 'Folio. SwiftResume', exact: true }).length).toBeGreaterThan(0);
   expect(screen.getByRole('radio', { name: 'Simple · 5' })).toBeTruthy();
   expect(screen.getByRole('link', { name: 'English Resume', exact: true }).getAttribute('aria-current')).toBe('page');
   expect(container.textContent).not.toMatch(/[가-힣ぁ-んァ-ヶ]/);

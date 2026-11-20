@@ -13,6 +13,7 @@ try {
   for (const locale of ['ja', 'ko', 'en']) {
     const home = locale === 'ja' ? '/' : `/${locale}/`, root = locale === 'ja' ? 'dist' : `dist/${locale}`;
     const copy = catalogs[locale], canonical = `https://rireki-easy.pages.dev${home}`;
+    const image = `https://rireki-easy.pages.dev/og/${locale}.png`;
     let localized = shell.replace('<html lang="ja">', `<html lang="${locale}">`)
       .replace(/<title>.*?<\/title>/, `<title>${escape(copy.meta.title)}</title>`)
       .replace(/(<meta\s+name="description"\s+content=")[^"]*"/s, `$1${escape(copy.meta.description)}"`)
@@ -21,10 +22,19 @@ try {
       .replace('rel="canonical" href="https://rireki-easy.pages.dev/"', `rel="canonical" href="${canonical}"`)
       .replaceAll('"name":"履歴書作成ツール"', `"name":${JSON.stringify(copy.common.brand)}`)
       .replaceAll('"inLanguage":"ja"', `"inLanguage":"${locale}"`);
+    localized = localized.replace('<meta name="twitter:card" content="summary" />', `<meta name="twitter:card" content="summary_large_image" />
+      <meta property="og:image" content="${image}" />
+      <meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content="${escape(copy.common.brand)}" />
+      <meta property="og:locale" content="${{ ja: 'ja_JP', ko: 'ko_KR', en: 'en_US' }[locale]}" />
+      <meta name="twitter:image" content="${image}" />
+      <meta name="twitter:title" content="${escape(copy.meta.title)}" />
+      <meta name="twitter:description" content="${escape(copy.meta.description)}" />`);
     localized = localized.replace(/(<meta\s+property="og:url"\s+content=")[^"]*"/s, `$1${canonical}"`)
       .replace(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/, (_, json) => {
         const schema = JSON.parse(json);
         Object.assign(schema, { name: copy.common.brand, description: copy.meta.description, inLanguage: locale, url: canonical });
+        schema.offers.priceCurrency = { ja: 'JPY', ko: 'KRW', en: 'USD' }[locale];
         if (locale === 'en') schema.offers.description = '18 English resume templates with PDF and Word downloads';
         else if (locale === 'ko') schema.offers.description = '모던·스탠더드 이력서와 한국형 경력기술서 작성·다운로드';
         return `<script type="application/ld+json">${JSON.stringify(schema)}</script>`;
@@ -36,6 +46,10 @@ try {
     let landing = localized.replace(/\s*<script type="module"[^>]*><\/script>/g, '')
       .replace(/\s*<link rel="modulepreload"[^>]*>/g, '')
       .replace('<div id="root"></div>', `<div id="root">${html}</div>`)
+      .replace('</head>', `<link rel="alternate" hreflang="ja" href="https://rireki-easy.pages.dev/" />
+        <link rel="alternate" hreflang="ko" href="https://rireki-easy.pages.dev/ko/" />
+        <link rel="alternate" hreflang="en" href="https://rireki-easy.pages.dev/en/" />
+        <link rel="alternate" hreflang="x-default" href="https://rireki-easy.pages.dev/" /></head>`)
       .replace('</body>', `<script>
         (() => { const q = new URLSearchParams(location.search); const h = new URLSearchParams(location.hash.slice(1));
           if (['#builder','#reset-password'].includes(location.hash) || ['code','token_hash','type','error','error_code'].some(k => q.has(k)) || ['access_token','type','error','error_code'].some(k => h.has(k))) {

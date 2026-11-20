@@ -20,7 +20,7 @@ export function Logo({ onClick }) {
       href="#"
       className="brand"
       onClick={onClick}
-      aria-label={copy.common.brand}
+      aria-label={[copy.common.brand, copy.common.brandSubtitle].filter(Boolean).join(" ")}
     >
       <span className="brand-icon">
         <FileText size={20} strokeWidth={1.7} />

@@ -12,7 +12,7 @@
 .auth-dialog-current .auth-subtitle{text-align:left;font-size:12px;line-height:1.8;color:#64748b;margin:10px 0 24px}
 .auth-dialog-current .auth-body .field{color:#3d526f;font-size:12px;font-weight:500;margin-bottom:16px}
 .auth-dialog-current .auth-body .field input{min-height:48px;border:1px solid #d9e2ef;border-radius:8px;background:#fff;color:#243b60;font-size:14px;padding:12px 40px;box-shadow:none}
-.auth-dialog-current .auth-body .field input::placeholder{color:#8a9bb1;font-size:13px}
+.auth-dialog-current .auth-body .field input::placeholder{color:#526783;font-size:13px}
 .auth-dialog-current .auth-body .field input:focus{border-color:#2563eb;outline:3px solid #dbeafe;outline-offset:0}
 .auth-dialog-current .input-icon>svg{color:#7c90ae;top:16px}.auth-dialog-current .password-toggle{color:#6d82a0;top:9px}
 .auth-dialog-current .forgot-link{color:#356bb4;font-size:11px;margin:-3px 0 20px auto;padding:5px 0}
