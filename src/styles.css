@@ -2277,6 +2277,17 @@ svg {
 .global-notice .icon-btn {
   padding: 3px;
 }
+.global-notice.success {
+  color: #205b47;
+  background: #e8f4ed;
+  border-bottom: 1px solid #c9e2d2;
+  padding: 16px 20px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.global-notice.success > svg {
+  flex-shrink: 0;
+}
 @media (min-width: 1500px) {
   .hero-inner {
     min-height: 670px;

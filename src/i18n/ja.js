@@ -310,6 +310,7 @@ export default {
     resetSuccess:
       "登録されている場合、再設定メールを送信しました。メールをご確認ください。",
     updateSuccess: "パスワードを更新しました。",
+    updateLoginSuccess: "パスワードを更新して、ログインしました。履歴書の作成を続けられます。",
     mismatch: "パスワードが一致しません。",
     invalid: "メールアドレスまたはパスワードをご確認ください。",
     notConfirmed:

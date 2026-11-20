@@ -47,6 +47,7 @@ export function App() {
     [accountMenu, setAccountMenu] = useState(false),
     [session, setSession] = useState(null),
     [authNotice, setAuthNotice] = useState(""),
+    [passwordUpdated, setPasswordUpdated] = useState(false),
     [loggingOut, setLoggingOut] = useState(false);
   const accountRef = useRef();
   const [variant, setVariant] = useState(() => {
@@ -177,6 +178,11 @@ export function App() {
     setBuilder(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  const finishPasswordUpdate = () => {
+    setAuthNotice("");
+    setPasswordUpdated(true);
+    start();
+  };
   const logout = async () => {
     if (!supabase) return;
     setLoggingOut(true);
@@ -306,6 +312,16 @@ export function App() {
           </button>
         </div>
       )}
+      {passwordUpdated && (
+        <div className="global-notice success" role="status">
+          <CheckCircle2 size={20} aria-hidden="true" />
+          <span>{copy.auth.updateLoginSuccess}</span>
+          <button className="icon-btn" type="button"
+            aria-label={copy.common.close} onClick={() => setPasswordUpdated(false)}>
+            <X size={16} />
+          </button>
+        </div>
+      )}
       {recovery ? (
         <main className="recovery-page">
           <div className="recovery-heading">
@@ -320,6 +336,7 @@ export function App() {
               key={authMode === "update" ? "update" : "reset"}
               initialMode={authMode === "update" ? "update" : "reset"}
               embedded
+              onPasswordUpdated={finishPasswordUpdate}
               onClose={() => start()}
               onGuest={() => start()}
             />
@@ -670,6 +687,7 @@ export function App() {
         <AuthDialog
           key={authMode}
           initialMode={authMode}
+          onPasswordUpdated={finishPasswordUpdate}
           onClose={() => setAuthMode(null)}
           onGuest={() => start()}
         />

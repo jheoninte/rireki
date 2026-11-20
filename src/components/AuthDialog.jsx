@@ -38,6 +38,7 @@ export default function AuthDialog({
   initialMode = "login",
   onClose,
   onGuest,
+  onPasswordUpdated,
   embedded = false,
 }) {
   const { copy } = useI18n();
@@ -115,6 +116,7 @@ export default function AuthDialog({
         setSuccess(c.updateSuccess);
         setPassword("");
         setConfirm("");
+        onPasswordUpdated?.();
       }
     } catch (err) {
       setError(authError(err, copy));
