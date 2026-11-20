@@ -58,8 +58,26 @@ Google OAuth의 승인된 JavaScript 출처에는 `https://rireki-easy.pages.dev
 
 운영 주소에서 호환 경로 → `/#builder` 이동과 두 초안 선택 안내를 확인했습니다. 최종 스타일 자산은 `assets/index-DoZZSURr.css`이며, 확인 화면은 `docs/screenshots/unified-production.jpg`, 모바일 검증 화면은 `docs/screenshots/unified-mobile.jpg`입니다.
 
-## 정적 랜딩과 편집기 분리 (로컬 구현, 배포 대기)
+## 정적 랜딩과 편집기 분리 (다국어 운영 배포에 포함)
 
 `pnpm build`는 검색용 `dist/index.html`, 편집기 `dist/app/index.html`, 복구 화면 `dist/reset-password/index.html`을 함께 생성합니다. 메인 랜딩의 본문과 서식 선택 링크는 JavaScript 없이도 동작하며, 기존 `/#builder`·인증 콜백은 `/app/`로 연결합니다. 배포 ZIP에는 반드시 dist 전체를 포함합니다.
 
 일본식 履歴書와 職務経歴書는 무료 서식입니다. 새 서식의 클라우드 저장을 활성화하려면 `supabase/migrations/202611200002_document_templates.sql`을 적용합니다. 기존 마이그레이션은 다시 실행하지 않습니다.
+
+## 일본어·한국어·영어 운영 배포 (2026-11-20)
+
+- GitHub: `https://github.com/jheoninte/rireki`, `master`에 소스 푸시 완료
+- 배포 소스 커밋: `340c4568a42e62c2abdefc9356dc0246d2fa8494`
+- Cloudflare Pages Production: `https://e6ca86a8.rireki-easy.pages.dev/`
+- 일본어: `https://rireki-easy.pages.dev/`
+- 한국어 바로 이력서: `https://rireki-easy.pages.dev/ko/`
+- 영어 Folio. / SwiftResume: `https://rireki-easy.pages.dev/en/`
+- 편집기: 각각 `/app/`, `/ko/app/`, `/en/app/`
+- 배포 ZIP: `.deploy/rireki-multilingual.zip`, dist 전체 34개 파일
+- 식별 정보: 공개 `/deployment-info.json`의 `sourceCommit`으로 Git 소스와 배포본 일치 확인
+- 검증: 배포 전 104개 테스트 통과, 빌드 성공. 운영 6개 홈·편집기 경로 응답, 영어 템플릿 18개, 일본어 원본 Word·영문 폰트 제공 확인. 운영 사이트 모바일 화면과 실제 PDF·Word 다운로드 및 PDF 텍스트 추출 확인
+- 모바일 운영 확인 화면: `docs/screenshots/multilingual-production-mobile.jpg`
+
+기존 Pages 프로젝트는 직접 업로드 방식이므로 Git 자동 배포 연결은 변경하지 않았습니다. 소스를 GitHub에 먼저 동기화하고 동일 소스의 빌드를 운영에 업로드했습니다. 비밀키·로컬 환경변수·소스 폴더는 배포 ZIP에 포함하지 않았습니다.
+
+이번 작업은 프론트엔드 공개 배포입니다. Supabase 마이그레이션·Edge Function 배포 및 한국어·영어 인증 복귀 URL 추가는 실행하지 않았습니다. 비회원 작성·브라우저 저장·파일 다운로드는 운영에서 확인했습니다.
