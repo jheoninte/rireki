@@ -1,5 +1,21 @@
 # 이메일 가입·Google 로그인 연결
 
+## 2026-11-20 연결 진행 상태
+
+- Supabase 프로젝트 `qccbcnoslaglgyrlaalo` 생성 완료 (도쿄).
+- 운영 Site URL과 `#builder`, `#reset-password` 복귀 주소 저장 완료.
+- Email 제공자 활성 및 이메일 확인 필수 상태를 공개 Auth settings API로 확인.
+- 로컬 `.env.local`에 프로젝트 URL과 publishable key 연결 완료. 이 파일은 Git에서 제외.
+- Google Cloud `rireki-easy`의 `Rireki Easy Web` OAuth 클라이언트 생성 완료.
+- Google 승인 원본: `https://rireki-easy.pages.dev`
+- Google 콜백: `https://qccbcnoslaglgyrlaalo.supabase.co/auth/v1/callback`
+- **미완료:** Google Client Secret의 Supabase 저장·제공자 활성화, Google 앱 프로덕션 게시 여부 확인, 새 환경변수 반영 배포, 실제 인증 왕복 검증.
+- 브라우저 연결 중단으로 위 미완료 단계에서 멈췄으며, 현재 공개 사이트가 인증 활성화되었다고 간주하면 안 됩니다.
+
+Google 클라이언트 생성 결과 대화상자의 비밀키를 저장하기 전 닫지 마세요. 비밀키는 Supabase Google 제공자에만 저장하고 소스코드·문서·프런트엔드에 넣지 않습니다. 대화상자가 이미 닫혔다면 기존 비밀키를 재조회할 수 있는 것으로 가정하지 말고 Google 콘솔의 비밀키 관리 절차를 따릅니다.
+
+Supabase 기본 이메일 발송은 운영 SMTP를 대체하지 않습니다. 실제 회원가입 공개 전에 기본 발송의 수신자 제한·발송 한도를 확인하고 운영 SMTP를 연결해야 합니다. 이메일 확인을 끄는 방식으로 우회하지 않습니다.
+
 화면과 Supabase 인증 호출은 구현되어 있습니다. 새 프로젝트의 URL·공개 키와 Google OAuth 설정을 연결하면 실제 인증이 활성화됩니다. 이 저장소에는 임의의 프로젝트나 가짜 로그인을 넣지 않았습니다.
 
 ## 1. 새 Supabase 프로젝트
