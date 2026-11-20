@@ -17,6 +17,16 @@
 
 `.deploy/rireki-easy.zip`은 최근 배포용 빌드 압축 파일입니다. 소스나 환경변수 파일을 포함하지 않습니다. Git 자동 배포는 연결하지 않았습니다.
 
+## UI 템플릿 배포 (2026-11-20)
+
+- 공개 주소: https://rireki-easy.pages.dev/templates/resume-builder/
+- 배포 파일: `.deploy/rireki-easy-template.zip` (기존 앱과 템플릿을 포함한 전체 빌드)
+- Cloudflare Pages Production 직접 업로드 성공 및 공개 페이지의 실시간 입력 반영 확인
+- 템플릿 소스: `public/templates/resume-builder/`
+- 확인 화면: `docs/screenshots/resume-builder-deployed.jpg`
+
+기존 메인 페이지와 별도로 접근하는 HTML/CSS/JavaScript 템플릿입니다. 이 배포에서는 기존 React 편집기에 디자인을 이식하지 않았습니다. `.deploy/rireki-easy.zip`은 이전 배포 파일로 보관합니다.
+
 ## 인증 상태
 
 비회원 작성·브라우저 저장·문서 다운로드와 선택적 Supabase 인증을 제공합니다. Google 제공자를 활성화하고 Google 앱을 프로덕션으로 게시했습니다. 이메일은 Resend의 검증된 `rireki.jpease.org`에서 발송합니다.
