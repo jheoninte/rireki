@@ -29,5 +29,6 @@ Supabase Site URL: `https://rireki-easy.pages.dev`
 
 - `https://rireki-easy.pages.dev/#builder`
 - `https://rireki-easy.pages.dev/#reset-password`
+- `https://rireki-easy.pages.dev/reset-password`
 
 Google OAuth의 승인된 JavaScript 출처에는 `https://rireki-easy.pages.dev`를 추가합니다. Callback URL은 Supabase 프로젝트가 제공하는 주소를 사용합니다.

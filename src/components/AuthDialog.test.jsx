@@ -151,7 +151,7 @@ describe("optional account authentication", () => {
     );
     expect(api.resetPasswordForEmail).toHaveBeenCalledWith(
       "returning@example.test",
-      { redirectTo: `${location.origin}/#reset-password` },
+      { redirectTo: `${location.origin}/reset-password` },
     );
     expect(await screen.findByText(c.resetSuccess)).toBeTruthy();
   });

@@ -278,6 +278,11 @@ export default {
     loginTitle: "おかえりなさい。",
     signupTitle: "次の一歩を、ここから。",
     resetTitle: "パスワードを再設定",
+    recoveryHelp:
+      "メール内のリンクを開くと、新しいパスワードを設定できます。期限切れ・使用済みの場合は、ここから新しいメールを送信してください。",
+    recoveryInvalid:
+      "この認証リンクは期限切れ・使用済み、または無効です。再設定メールを送り直し、最新のメール内のリンクを開いてください。",
+    recoveryChecking: "認証リンクを確認しています…",
     updateTitle: "新しいパスワード",
     subtitle: "履歴書づくりは、登録なしでも無料です。",
     google: "Googleアカウントで続ける",

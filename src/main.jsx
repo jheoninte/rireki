@@ -25,14 +25,21 @@ import {
 } from "lucide-react";
 import { I18nProvider, useI18n } from "./i18n";
 import { supabase } from "./lib/auth";
+import { readAuthRoute } from "./lib/auth-route";
 import { Button, Logo, Modal, SectionTitle } from "./components/ui";
 import Resume from "./components/Resume";
 import Builder from "./components/Builder";
 import AuthDialog from "./components/AuthDialog";
 import "./styles.css";
 
-function App() {
+export function App() {
   const { copy, locale } = useI18n();
+  const [recovery, setRecovery] = useState(
+    () => readAuthRoute(location).recovery,
+  );
+  const [checkingRecovery, setCheckingRecovery] = useState(
+    () => readAuthRoute(location).exchanging,
+  );
   const [builder, setBuilder] = useState(location.hash === "#builder"),
     [preview, setPreview] = useState(null),
     [authMode, setAuthMode] = useState(null),
@@ -63,7 +70,7 @@ function App() {
       const hash = location.hash;
       setBuilder(hash === "#builder");
       setMenu(false);
-      if (hash === "#reset-password") setAuthMode("reset");
+      if (readAuthRoute(location).recovery) setRecovery(true);
       if (hash && hash !== "#builder")
         requestAnimationFrame(() =>
           document
@@ -76,30 +83,59 @@ function App() {
     return () => window.removeEventListener("hashchange", route);
   }, []);
   useEffect(() => {
-    if (!supabase) return;
+    if (!supabase) {
+      setCheckingRecovery(false);
+      return;
+    }
     let alive = true;
-    supabase.auth
-      .getSession()
+    const recoveryToken = recovery
+      ? new URLSearchParams(location.search).get("token_hash")
+      : null;
+    if (recoveryToken) history.replaceState(null, "", "/reset-password");
+    const initialization = recoveryToken
+      ? supabase.auth.verifyOtp({ token_hash: recoveryToken, type: "recovery" })
+      : supabase.auth.getSession();
+    initialization
       .then(({ data, error }) => {
         if (alive) {
           setSession(data.session);
-          if (error) setAuthNotice(copy.auth.callbackError);
+          if (recoveryToken && !error && data.session) setAuthMode("update");
+          if (error) {
+            setAuthNotice(
+              recovery ? copy.auth.recoveryInvalid : copy.auth.callbackError,
+            );
+          }
         }
       })
       .catch(() => {
-        if (alive) setAuthNotice(copy.auth.generic);
+        if (alive)
+          setAuthNotice(
+            recovery ? copy.auth.recoveryInvalid : copy.auth.generic,
+          );
+      })
+      .finally(() => {
+        if (alive) setCheckingRecovery(false);
       });
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, next) => {
       if (!alive) return;
       setSession(next);
-      if (event === "PASSWORD_RECOVERY") setAuthMode("update");
+      if (event === "PASSWORD_RECOVERY") {
+        setRecovery(true);
+        setCheckingRecovery(false);
+        setAuthMode("update");
+      }
     });
-    const query = new URLSearchParams(location.search),
-      hashParams = new URLSearchParams(location.hash.slice(1));
-    if (query.has("error") || hashParams.has("error"))
-      setAuthNotice(copy.auth.callbackError);
+    const authRoute = readAuthRoute(location);
+    if (authRoute.error) {
+      if (authRoute.recovery) setRecovery(true);
+      setAuthNotice(
+        authRoute.recovery
+          ? copy.auth.recoveryInvalid
+          : copy.auth.callbackError,
+      );
+    }
     return () => {
       alive = false;
       subscription.unsubscribe();
@@ -125,12 +161,18 @@ function App() {
     setAuthMode(null);
     setPreview(null);
     setMenu(false);
+    setRecovery(false);
+    if (location.pathname === "/reset-password")
+      history.replaceState(null, "", "/");
     location.hash = "builder";
     setBuilder(true);
     window.scrollTo(0, 0);
   };
   const home = (e) => {
     e?.preventDefault();
+    setRecovery(false);
+    if (location.pathname === "/reset-password")
+      history.replaceState(null, "", "/");
     location.hash = "";
     setBuilder(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -264,7 +306,27 @@ function App() {
           </button>
         </div>
       )}
-      {builder ? (
+      {recovery ? (
+        <main className="recovery-page">
+          <div className="recovery-heading">
+            <span className="overline">ACCOUNT RECOVERY</span>
+            <h1>{copy.auth.resetTitle}</h1>
+            <p>{copy.auth.recoveryHelp}</p>
+          </div>
+          {checkingRecovery ? (
+            <p role="status">{copy.auth.recoveryChecking}</p>
+          ) : (
+            <AuthDialog
+              key={authMode === "update" ? "update" : "reset"}
+              initialMode={authMode === "update" ? "update" : "reset"}
+              embedded
+              onClose={() => start()}
+              onGuest={() => start()}
+            />
+          )}
+          <a href="/">{copy.common.home}</a>
+        </main>
+      ) : builder ? (
         <Builder
           key={locale}
           onHome={home}
@@ -604,7 +666,7 @@ function App() {
           </div>
         </Modal>
       )}
-      {authMode && (
+      {authMode && !recovery && (
         <AuthDialog
           key={authMode}
           initialMode={authMode}
@@ -624,8 +686,11 @@ function SaveSymbol(props) {
   );
 }
 
-createRoot(document.getElementById("root")).render(
-  <I18nProvider locale="ja">
-    <App />
-  </I18nProvider>,
-);
+const appRoot = document.getElementById("root");
+if (appRoot) {
+  createRoot(appRoot).render(
+    <I18nProvider locale="ja">
+      <App />
+    </I18nProvider>,
+  );
+}

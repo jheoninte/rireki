@@ -38,6 +38,7 @@ export default function AuthDialog({
   initialMode = "login",
   onClose,
   onGuest,
+  embedded = false,
 }) {
   const { copy } = useI18n();
   const c = copy.auth;
@@ -104,7 +105,7 @@ export default function AuthDialog({
         onClose();
       } else if (mode === "reset") {
         result = await supabase.auth.resetPasswordForEmail(email.trim(), {
-          redirectTo: `${location.origin}/#reset-password`,
+          redirectTo: `${location.origin}/reset-password`,
         });
         if (result.error) throw result.error;
         setSuccess(c.resetSuccess);
@@ -176,121 +177,126 @@ export default function AuthDialog({
       </div>
     </label>
   );
-  return (
-    <Modal title={copy.common.brand} className="auth-dialog" onClose={onClose}>
-      <div className="auth-body">
-        <span className="auth-symbol">
-          <FileSymbol />
-        </span>
-        <h2>{title}</h2>
-        <p className="auth-subtitle">{c.subtitle}</p>
-        {!authConfigured && (
-          <div className="auth-notice" role="status">
-            <CircleAlert size={18} />
-            <span>{c.unavailable}</span>
-          </div>
-        )}
-        {["login", "signup"].includes(mode) && (
-          <>
-            <button
-              type="button"
-              className="google-btn"
-              onClick={google}
-              disabled={busy || !authConfigured}
-            >
-              <GoogleIcon />
-              {c.google}
-            </button>
-            <div className="auth-divider">
-              <span>{c.divider}</span>
-            </div>
-          </>
-        )}
-        <form onSubmit={submit}>
-          {mode !== "update" && (
-            <label className="field">
-              {c.email}
-              <div className="input-icon">
-                <Mail size={16} />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  autoComplete="email"
-                  placeholder={c.emailPlaceholder}
-                  required
-                  maxLength={254}
-                />
-              </div>
-            </label>
-          )}
-          {mode !== "reset" && passwordField()}
-          {(mode === "signup" || mode === "update") && passwordField(true)}
-          {mode === "login" && (
-            <button
-              type="button"
-              className="forgot-link"
-              onClick={() => changeMode("reset")}
-            >
-              {c.forgot}
-            </button>
-          )}
-          {error && (
-            <p className="form-alert error" role="alert">
-              <CircleAlert size={17} />
-              {error}
-            </p>
-          )}
-          {success && (
-            <p className="form-alert success" role="status">
-              <CheckCircle2 size={18} />
-              {success}
-            </p>
-          )}
-          <Button
-            type="submit"
-            disabled={busy || !authConfigured}
-            className="full-width"
-          >
-            {busy
-              ? copy.common.working
-              : mode === "login"
-                ? c.loginSubmit
-                : mode === "signup"
-                  ? c.signupSubmit
-                  : mode === "reset"
-                    ? c.resetSubmit
-                    : c.updateSubmit}
-            <ArrowRight size={17} />
-          </Button>
-        </form>
-        {mode === "login" || mode === "signup" ? (
-          <p className="auth-switch">
-            {mode === "login" ? c.noAccount : c.hasAccount}
-            <button
-              type="button"
-              onClick={() => changeMode(mode === "login" ? "signup" : "login")}
-            >
-              {mode === "login" ? c.signupLink : c.loginLink}
-            </button>
-          </p>
-        ) : (
+  const content = (
+    <div className="auth-body">
+      <span className="auth-symbol">
+        <FileSymbol />
+      </span>
+      <h2>{title}</h2>
+      <p className="auth-subtitle">{c.subtitle}</p>
+      {!authConfigured && (
+        <div className="auth-notice" role="status">
+          <CircleAlert size={18} />
+          <span>{c.unavailable}</span>
+        </div>
+      )}
+      {["login", "signup"].includes(mode) && (
+        <>
           <button
             type="button"
-            className="auth-back"
-            onClick={() => changeMode("login")}
+            className="google-btn"
+            onClick={google}
+            disabled={busy || !authConfigured}
           >
-            {c.backLogin}
+            <GoogleIcon />
+            {c.google}
+          </button>
+          <div className="auth-divider">
+            <span>{c.divider}</span>
+          </div>
+        </>
+      )}
+      <form onSubmit={submit}>
+        {mode !== "update" && (
+          <label className="field">
+            {c.email}
+            <div className="input-icon">
+              <Mail size={16} />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                placeholder={c.emailPlaceholder}
+                required
+                maxLength={254}
+              />
+            </div>
+          </label>
+        )}
+        {mode !== "reset" && passwordField()}
+        {(mode === "signup" || mode === "update") && passwordField(true)}
+        {mode === "login" && (
+          <button
+            type="button"
+            className="forgot-link"
+            onClick={() => changeMode("reset")}
+          >
+            {c.forgot}
           </button>
         )}
-        <div className="auth-guest">
-          <button type="button" onClick={onGuest}>
-            {c.guestLink}
-            <ArrowRight size={15} />
+        {error && (
+          <p className="form-alert error" role="alert">
+            <CircleAlert size={17} />
+            {error}
+          </p>
+        )}
+        {success && (
+          <p className="form-alert success" role="status">
+            <CheckCircle2 size={18} />
+            {success}
+          </p>
+        )}
+        <Button
+          type="submit"
+          disabled={busy || !authConfigured}
+          className="full-width"
+        >
+          {busy
+            ? copy.common.working
+            : mode === "login"
+              ? c.loginSubmit
+              : mode === "signup"
+                ? c.signupSubmit
+                : mode === "reset"
+                  ? c.resetSubmit
+                  : c.updateSubmit}
+          <ArrowRight size={17} />
+        </Button>
+      </form>
+      {mode === "login" || mode === "signup" ? (
+        <p className="auth-switch">
+          {mode === "login" ? c.noAccount : c.hasAccount}
+          <button
+            type="button"
+            onClick={() => changeMode(mode === "login" ? "signup" : "login")}
+          >
+            {mode === "login" ? c.signupLink : c.loginLink}
           </button>
-          <p>{c.storage}</p>
-        </div>
+        </p>
+      ) : (
+        <button
+          type="button"
+          className="auth-back"
+          onClick={() => changeMode("login")}
+        >
+          {c.backLogin}
+        </button>
+      )}
+      <div className="auth-guest">
+        <button type="button" onClick={onGuest}>
+          {c.guestLink}
+          <ArrowRight size={15} />
+        </button>
+        <p>{c.storage}</p>
       </div>
+    </div>
+  );
+  return embedded ? (
+    <section className="auth-dialog recovery-card">{content}</section>
+  ) : (
+    <Modal title={copy.common.brand} className="auth-dialog" onClose={onClose}>
+      {content}
     </Modal>
   );
 }
