@@ -156,7 +156,7 @@ export default {
   footer: {
     description:
       "あなたの「これから」を応援する、\nシンプルな履歴書作成サービス。",
-    privacy: "データについて",
+    privacy: "プライバシーポリシー",
     account: "アカウントを作成",
     copyright: "All rights reserved.",
     localeNote: "日本語版",

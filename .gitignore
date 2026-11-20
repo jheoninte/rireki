@@ -9,3 +9,6 @@ dist/
 # Local account setup screenshots are not source artifacts.
 docs/screenshots/google-auth-setup.jpg
 docs/screenshots/supabase-create.jpg
+docs/screenshots/*-approval.jpg
+docs/screenshots/*-consent.jpg
+*.zip

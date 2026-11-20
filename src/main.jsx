@@ -555,6 +555,7 @@ function App() {
                 <p>{copy.footer.description}</p>
               </div>
               <div className="footer-links">
+                <a href="/privacy.html">{copy.footer.privacy}</a>
                 {nav.map(([key, label]) => (
                   <a href={`#${key}`} key={key}>
                     {label}
