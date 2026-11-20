@@ -1,0 +1,107 @@
+import React, { useState } from 'react';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { I18nProvider } from './i18n';
+import Landing, { StaticLanding } from './components/Landing';
+import Builder from './components/Builder';
+import { emptyResume } from './lib/resume-data';
+import { authReturnPath, isEditorPath, localeFromLocation, marketHome } from './lib/market-routes';
+import { initialTemplate } from './lib/resume-markets';
+vi.mock('./lib/auth', () => ({ supabase: null, authConfigured: false }));
+vi.mock('./lib/export', () => ({ exportResume: vi.fn().mockResolvedValue(undefined) }));
+import { exportResume } from './lib/export';
+
+beforeEach(() => { localStorage.clear(); sessionStorage.clear(); vi.clearAllMocks(); Element.prototype.scrollIntoView = vi.fn(); });
+afterEach(() => { cleanup(); history.replaceState(null, '', '/'); });
+it('publishes Modern, Standard and a Korean career document with country navigation', () => {
+  const { container } = render(<StaticLanding locale="ko" />);
+  expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('바로 이력서');
+  expect(container.querySelectorAll('.ko-template-card')).toHaveLength(3);
+  expect(screen.getByRole('heading', { name: '모던', exact: true })).toBeTruthy();
+  expect(screen.getByRole('heading', { name: '스탠더드', exact: true })).toBeTruthy();
+  expect(screen.getByRole('heading', { name: '경력기술서', exact: true })).toBeTruthy();
+  expect(screen.getByRole('link', { name: '경력기술서 작성', exact: true }).getAttribute('href')).toBe('/ko/app/?template=career-description');
+  expect(screen.getByRole('link', { name: '한국어 이력서', exact: true }).getAttribute('aria-current')).toBe('page');
+  expect(screen.getByRole('link', { name: '모던으로 작성 시작' }).getAttribute('href')).toBe('/ko/app/?template=modern');
+  expect(container.querySelector('.korean-landing').textContent).not.toMatch(/[ぁ-んァ-ヶ]/);
+});
+function KoreanBuilder() {
+  const [variant, setVariant] = useState('modern');
+  return <I18nProvider locale="ko"><Builder variant={variant} setVariant={setVariant} onHome={() => {}} onLogin={() => {}} /></I18nProvider>;
+}
+it('switches to a career-focused form and export without losing resume-only data', async () => {
+  const draft = { ...emptyResume(), name: '테스트 지원자', birth: '1990.01.01', intro: '보관할 자기소개', education: [{ school: '보관할 학교', period: '2009–2013', major: '전공' }], projects: [{ projectName: '업무 개선', projectPeriod: '2025', projectRole: '기획', projectStack: 'Excel', projectResult: '검증한 성과' }] };
+  localStorage.setItem('rireki:resume:ko:v1', JSON.stringify(draft));
+  const { container } = render(<KoreanBuilder />);
+  const select = screen.getByRole('combobox', { name: '이력서 템플릿', exact: true });
+  fireEvent.change(select, { target: { value: 'career-description' } });
+  expect(screen.queryByRole('button', { name: '사진 업로드', exact: true })).toBeNull();
+  expect(screen.queryByRole('textbox', { name: '학교명', exact: true })).toBeNull();
+  expect(screen.queryByRole('textbox', { name: '자기소개·강점', exact: true })).toBeNull();
+  const preview = container.querySelector('.unified-preview .ko-career');
+  expect(preview.textContent).toContain('업무 개선');
+  expect(preview.textContent).not.toContain('보관할 학교');
+  expect(preview.textContent).not.toContain('보관할 자기소개');
+  expect(preview.textContent).not.toContain('1990.01.01');
+  fireEvent.click(screen.getByRole('button', { name: 'Word 다운로드', exact: true }));
+  await waitFor(() => expect(exportResume).toHaveBeenCalledOnce());
+  expect(exportResume.mock.calls[0][3]).toMatchObject({ locale: 'ko', variant: 'career-description' });
+  fireEvent.change(select, { target: { value: 'modern' } });
+  expect(screen.getByRole('textbox', { name: '학교명', exact: true }).value).toBe('보관할 학교');
+  expect(screen.getByRole('textbox', { name: '자기소개·강점', exact: true }).value).toBe('보관할 자기소개');
+  expect(JSON.parse(localStorage.getItem('rireki:resume:ko:v1')).birth).toBe('1990.01.01');
+});
+it('keeps Korean drafts separate and preserves projects when switching the original two layouts', async () => {
+  const japanese = { ...emptyResume(), name: '日本語の下書き' };
+  localStorage.setItem('rireki:resume:ja:v1', JSON.stringify(japanese));
+  const { container } = render(<KoreanBuilder />);
+  expect(screen.getByRole('textbox', { name: /^이름/ }).value).toBe('');
+  expect(screen.queryByLabelText('ふりがな')).toBeNull();
+  expect(container.textContent).not.toMatch(/[ぁ-んァ-ヶ]/);
+  fireEvent.change(screen.getByRole('textbox', { name: /^이름/ }), { target: { value: '한국어 초안' } });
+  fireEvent.change(screen.getByRole('textbox', { name: '프로젝트명', exact: true }), { target: { value: '지원자 화면 개선' } });
+  fireEvent.change(screen.getByRole('combobox', { name: '이력서 템플릿', exact: true }), { target: { value: 'classic' } });
+  expect(screen.getByRole('textbox', { name: /^이름/ }).value).toBe('한국어 초안');
+  expect(container.querySelector('.unified-preview .resume-paper.classic')).toBeTruthy();
+  expect(container.querySelector('.unified-preview .ko-standard').textContent).toContain('지원자 화면 개선');
+  expect(JSON.parse(localStorage.getItem('rireki:resume:ko:v1')).name).toBe('한국어 초안');
+  expect(JSON.parse(localStorage.getItem('rireki:resume:ja:v1'))).toEqual(japanese);
+  fireEvent.click(screen.getByRole('button', { name: 'Word 다운로드', exact: true }));
+  await waitFor(() => expect(exportResume).toHaveBeenCalledOnce());
+  expect(exportResume.mock.calls[0][3]).toMatchObject({ locale: 'ko', variant: 'classic' });
+});
+it('publishes a distinct English template gallery', () => {
+  render(<I18nProvider locale="en"><Landing /></I18nProvider>);
+  expect(screen.getByRole('heading', { level: 1 }).textContent).toContain('Your experience.');
+  expect(screen.queryByRole('textbox')).toBeNull();
+});
+it('resolves market routes and initial styles independently', () => {
+  expect(localeFromLocation(new URL('https://example.com/ko/app/?template=classic'))).toBe('ko');
+  expect(localeFromLocation(new URL('https://example.com/reset-password?lang=ko'))).toBe('ko');
+  expect(isEditorPath('/ko/app/')).toBe(true);
+  expect(marketHome('ko')).toBe('/ko/');
+  expect(authReturnPath('ko')).toBe('/ko/app/');
+  expect(authReturnPath('ja')).toBe('/#builder');
+  localStorage.setItem('resumemaker-style:ja', 'rirekisho');
+  expect(initialTemplate('ko', '')).toBe('modern');
+  expect(initialTemplate('ko', '?template=classic')).toBe('classic');
+  expect(initialTemplate('ko', '?template=developer')).toBe('modern');
+});
+it('selects job examples without replacing a draft and confirms sample replacement while preserving the accent and layout', async () => {
+  history.replaceState(null, '', '/ko/app/?template=modern&example=developer');
+  localStorage.setItem('rireki:resume:ko:v1', JSON.stringify({ ...emptyResume(), name: '작성 중인 이름', accent: 'navy' }));
+  const { container } = render(<KoreanBuilder />);
+  expect(screen.getByRole('combobox', { name: '작성 예시 직무' }).value).toBe('developer');
+  expect(screen.getByRole('textbox', { name: /^이름/ }).value).toBe('작성 중인 이름');
+  fireEvent.click(screen.getByRole('button', { name: '개발·IT 예시 불러오기' }));
+  expect(screen.getByRole('dialog')).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: '취소', exact: true }));
+  expect(screen.getByRole('textbox', { name: /^이름/ }).value).toBe('작성 중인 이름');
+  fireEvent.click(screen.getByRole('button', { name: '개발·IT 예시 불러오기' }));
+  fireEvent.click(screen.getByRole('button', { name: '예시로 바꾸기', exact: true }));
+  expect(screen.getByRole('textbox', { name: '프로젝트명', exact: true }).value).toBe('예약 신청 화면 개선');
+  expect(container.querySelector('.unified-preview .resume-paper.modern').style.getPropertyValue('--ko-accent')).toBe('#243b60');
+  fireEvent.click(screen.getByRole('radio', { name: '차콜', exact: true }));
+  await waitFor(() => expect(JSON.parse(localStorage.getItem('rireki:resume:ko:v1')).accent).toBe('slate'));
+  expect(screen.getByRole('region', { name: '제출 전 자동 점검' }).textContent).toContain('가상 예시');
+});

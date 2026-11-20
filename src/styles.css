@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap");
 :root {
   font-family: "DM Sans", "Noto Sans JP", sans-serif;
   color: #253e34;
@@ -705,14 +705,14 @@ svg {
   transform: translateX(-50%);
   width: 337px;
 }
-.template-paper-wrap > .resume-paper {
+.template-paper-wrap > .template-document {
   width: 600px;
   transform: scale(0.563);
   transform-origin: top left;
   box-shadow: 0 8px 30px #42523d18;
   transition: transform 0.25s;
 }
-.template-visual:hover .template-paper-wrap > .resume-paper {
+.template-visual:hover .template-paper-wrap > .template-document {
   transform: scale(0.575);
 }
 .popular-tag {
@@ -1118,7 +1118,7 @@ svg {
   gap: 17px;
   padding-top: 9px;
 }
-.footer-account > button {
+.footer-account > :is(button, a) {
   background: transparent;
   border: 0;
   font-size: 10px;
@@ -2003,6 +2003,27 @@ svg {
   padding: 3px;
   display: flex;
 }
+.toast.auth-nudge {
+  left: auto;
+  right: 24px;
+  bottom: 80px;
+  transform: none;
+  z-index: 90;
+  width: min(440px, calc(100vw - 48px));
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+.toast.auth-nudge > span {
+  flex: 1;
+  min-width: 160px;
+}
+.toast.auth-nudge > .btn {
+  padding: 8px 12px;
+  border: 1px solid currentColor;
+  color: #fff;
+  font-size: 12px;
+  min-height: 40px;
+}
 .auth-dialog {
   width: 455px;
 }
@@ -2459,10 +2480,10 @@ svg {
   .template-paper-wrap {
     width: 285px;
   }
-  .template-paper-wrap > .resume-paper {
+  .template-paper-wrap > .template-document {
     transform: scale(0.475);
   }
-  .template-visual:hover .template-paper-wrap > .resume-paper {
+  .template-visual:hover .template-paper-wrap > .template-document {
     transform: scale(0.485);
   }
   .template-info {
@@ -2735,10 +2756,10 @@ svg {
     width: 234px;
     top: 30px;
   }
-  .template-paper-wrap > .resume-paper {
+  .template-paper-wrap > .template-document {
     transform: scale(0.39);
   }
-  .template-visual:hover .template-paper-wrap > .resume-paper {
+  .template-visual:hover .template-paper-wrap > .template-document {
     transform: scale(0.4);
   }
   .popular-tag {
@@ -2837,7 +2858,7 @@ svg {
   .footer-links {
     gap: 18px 25px;
   }
-  .footer-account > button {
+  .footer-account > :is(button, a) {
     font-size: 9px;
   }
   .footer-top {
@@ -3171,10 +3192,10 @@ svg {
     width: 280px;
     top: 30px;
   }
-  .template-paper-wrap > .resume-paper {
+  .template-paper-wrap > .template-document {
     transform: scale(0.467);
   }
-  .template-visual:hover .template-paper-wrap > .resume-paper {
+  .template-visual:hover .template-paper-wrap > .template-document {
     transform: scale(0.475);
   }
   .popular-tag {
@@ -3404,7 +3425,7 @@ svg {
     gap: 18px;
     justify-content: start;
   }
-  .footer-account > button {
+  .footer-account > :is(button, a) {
     font-size: 9px;
     gap: 17px;
     justify-content: start;
@@ -3846,10 +3867,10 @@ svg {
   .template-paper-wrap {
     width: 253px;
   }
-  .template-paper-wrap > .resume-paper {
+  .template-paper-wrap > .template-document {
     transform: scale(0.422);
   }
-  .template-visual:hover .template-paper-wrap > .resume-paper {
+  .template-visual:hover .template-paper-wrap > .template-document {
     transform: scale(0.43);
   }
   .template-visual {
@@ -4088,3 +4109,26 @@ svg {
   border: 1px solid #e1e7df;
   border-radius: 20px;
 }
+
+/* Account workspace, coaching, and focused mobile editing. */
+.workspace-card{background:#fff;border:1px solid #dde5dc;border-radius:14px;padding:22px;margin:18px 0;color:#284b3a;overflow-wrap:anywhere}
+.workspace-card p{font-size:13px;line-height:1.8;margin:10px 0}.workspace-card small{display:block;font-size:11px;color:#657265;line-height:1.8;margin:9px 0}
+.workspace-heading{display:flex;gap:10px;align-items:center;font-size:15px}.workspace-heading>span{margin-left:auto;font-size:13px}.workspace-card progress{width:100%;height:5px;accent-color:#285c48;margin-top:16px}
+.workspace-actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:14px}.workspace-card .btn{font-size:12px;padding:11px 16px}.workspace-card .field{margin:16px 0}.workspace-card select{width:100%}
+.workspace-card details{font-size:12px;line-height:1.8;margin-top:15px}.workspace-card summary{cursor:pointer}.workspace-card details p{background:#f5f7f1;padding:12px;border-radius:8px}
+.workspace-card .consent-line{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.8;margin:14px 0}.consent-line input{width:17px;height:17px;flex-shrink:0;margin-top:4px;accent-color:#285c48}.ai-result{border-top:1px solid #dbe5db;margin-top:18px;padding-top:8px}.ai-result p{white-space:pre-wrap}
+.price-option{display:flex;gap:16px;justify-content:space-between;align-items:center;border-top:1px solid #e4e8e0;padding:16px 0}.price-option strong{font-size:14px}.price-option .btn{flex-shrink:0}.next-actions a{display:flex;align-items:center;gap:8px;font-size:13px;margin-top:15px;color:#285c48}
+.mobile-field-nav{display:none}.google-btn+.google-btn{margin-top:10px}.resume-portfolio{margin:18px 0;padding:14px;background:#f2f5ef;font-size:11px;overflow-wrap:anywhere}.resume-portfolio p{margin-top:7px}.resume-portfolio a{color:inherit;text-decoration:none}
+.resume-paper.developer{font-family:'Noto Sans JP',sans-serif;--resume-accent:#254766}.resume-paper.developer .resume-heading{border-color:#254766}.developer .resume-section h4{color:#254766;background:#eef3f8;padding:8px}.developer .resume-kicker{color:#254766}.developer .resume-photo{display:none}.developer .resume-contacts{grid-template-columns:1fr 1fr}
+.resume-paper.designer{border-top:12px solid #aa6c4c}.designer .resume-identity{background:#f8efe6;padding:22px;border-radius:10px}.designer .resume-portfolio{border-left:4px solid #aa6c4c;background:#fbf3ed}.designer .resume-section h4{color:#925b3e;letter-spacing:.12em}.designer .resume-heading{border:0}
+.resume-paper.marketing{border-top:8px solid #5b507b}.marketing .resume-heading{border-color:#5b507b}.marketing .resume-section h4{color:#5b507b;border-bottom:2px solid #dcd7e7}.marketing .identity-main>strong{color:#5b507b}.marketing .resume-portfolio{background:#f1eef7}
+.resume-paper.ats{font-family:Arial,'Noto Sans JP',sans-serif;color:#111}.ats .resume-photo,.ats .resume-kicker,.ats .resume-heading>span,.ats .resume-section h4 span{display:none}.ats .resume-heading{border-bottom:1px solid #111}.ats .resume-contacts{display:block;border:0}.ats .resume-contacts>div{display:flex;gap:12px;margin:6px 0}.ats .resume-section h4{color:#111;border-bottom:1px solid #777;background:none}.ats .resume-row{display:block}.ats .resume-portfolio{padding:0;background:none}.ats .resume-row time{display:block;margin-bottom:4px}
+@media(max-width:700px){
+ .workspace-card{padding:18px;margin:14px 0}.workspace-heading{font-size:14px}.cloud-card .workspace-actions{gap:12px}.cloud-card .btn{width:100%;justify-content:center}
+ .editor-form .field:not(.mobile-active){display:none}.editor-form .field.mobile-active{display:flex;min-height:100px;flex-direction:column;justify-content:center}.editor-form .field-grid{display:block}.editor-form:not(.mobile-field-0) .photo-upload{display:none}
+ .editor-form .entry-card:not(:has(.mobile-active)){display:none}.editor-form .entry-card{margin:10px 0}.editor-form .form-subheading{font-size:12px;margin:14px 0}.mobile-field-nav{display:flex;gap:16px;align-items:center;padding:16px 22px;border-top:1px solid #e1e6dd}.mobile-field-nav>span{margin-right:auto;font-size:12px;color:#71806c}.editor-form .field input,.editor-form .field textarea{font-size:16px;min-height:52px}.editor-form .field input::placeholder,.editor-form .field textarea::placeholder{font-size:13px}
+ .price-option{align-items:flex-start;flex-direction:column}.price-option .btn{width:100%}.coaching .field{display:flex!important;min-height:0!important}.builder-grid .live-preview{position:static}
+}
+
+.inline-writing-tip{font-size:12px;line-height:1.8;color:#45644e;margin:14px 0 22px}
+@media(max-width:700px){.editor-panel[data-mobile-last="false"] .editor-footer{display:none}}

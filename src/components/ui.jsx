@@ -26,7 +26,8 @@ export function Logo({ onClick }) {
         <FileText size={20} strokeWidth={1.7} />
       </span>
       <span>
-        rireki<span className="brand-dot">.</span>
+        {copy.common.brand}
+        {copy.common.brandSubtitle && <small className="brand-subtitle">{copy.common.brandSubtitle}</small>}
       </span>
     </a>
   );

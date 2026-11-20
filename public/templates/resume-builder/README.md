@@ -1,17 +1,7 @@
-# Resume builder UI template
+# Unified editor compatibility entry
 
-프레임워크에 의존하지 않는 HTML + CSS + JavaScript 템플릿입니다.
+이 주소는 독립 앱이 아니라 메인 서비스의 /#builder 로 연결되는 호환 진입점입니다.
 
-개발 서버에서 `/templates/resume-builder/index.html`을 열거나, 세 파일을 같은 폴더에 두고 `index.html`을 브라우저에서 여세요. 현재 저장소에서는 `pnpm dev`로 시작할 수 있습니다. `public` 내부 파일이므로 프로덕션 빌드에도 복사됩니다.
+첫 번째 시안의 카드형 폼·파란색 UI·고정 미리보기·모바일 미리보기 전환은 src/components/Builder.jsx 및 src/unified.css로 이식했습니다. 로그인·클라우드·PDF/Word·결제 기능과 같은 React 편집기를 사용합니다.
 
-- `index.html`: 시맨틱 레이아웃, 기본정보 폼, 경력·학력 카드, 미리보기
-- `styles.css`: 폰트, 색상, 카드, 입력, 버튼, 반응형 및 인쇄 스타일
-- `script.js`: 실시간 반영, 반복 항목 추가·삭제, 작성률, 브라우저 자동 저장
-
-데스크톱은 5:5 그리드입니다. 800px 이하에서는 하단 버튼으로 미리보기를 전환하고, 480px 이하에서는 입력 필드를 한 열로 배치합니다. 미리보기는 A4 비율로 축소되며 내용이 길면 스크롤할 수 있습니다. 인쇄 시에는 원래 크기로 출력합니다.
-
-PDF 다운로드는 브라우저 인쇄창을 엽니다. 대상에서 **PDF로 저장**을 선택하세요. 페이지 머리글·바닥글은 브라우저 인쇄 설정에서 끌 수 있습니다. 자동 PDF 생성 API는 연결되어 있지 않습니다.
-
-첫 방문에는 가상의 예시가 표시됩니다. 수정 내용은 별도 키 `folio.resume-template.v1`로 현재 브라우저의 localStorage에 저장되며, 기존 앱의 이력서 데이터와 독립적입니다. 로그인이나 서버 저장 기능은 포함하지 않습니다. 파일을 직접 여는 환경에서는 브라우저 정책에 따라 저장이 제한될 수 있습니다.
-
-Inter, Pretendard, Noto Sans JP 순서로 적용하며, Google Fonts 및 jsDelivr에서 폰트 리소스를 불러옵니다. 외부 폰트를 사용할 수 없는 경우 sans-serif로 표시됩니다. 기존 앱에 적용할 때는 CSS 선택자를 편집기 루트에 한정하거나 컴포넌트 스타일로 옮기면 됩니다.
+기존 folio.resume-template.v1 데이터는 지우지 않습니다. 메인 초안이 없으면 자동 변환하고, 두 초안이 모두 있으면 선택해서 가져올 수 있습니다. 이식 로직은 src/lib/legacy-draft.js에 있습니다. 같은 도메인/브라우저의 localStorage를 읽으며, 다른 기기에서의 복원은 클라우드 기능 연결 후 로그인하여 사용합니다.

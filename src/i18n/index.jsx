@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useEffect } from "react";
 import ja from "./ja";
+import ko from './ko';
+import en from './en';
 
 // Add a catalog here to support another locale without changing UI components.
-export const catalogs = { ja };
+export const catalogs = { ja, ko, en };
 export const supportedLocales = Object.keys(catalogs);
 const I18nContext = createContext({ locale: "ja", copy: ja });
 export function I18nProvider({ locale = "ja", children }) {

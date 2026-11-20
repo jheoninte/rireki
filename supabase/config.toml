@@ -1,0 +1,8 @@
+[functions.coach]
+verify_jwt = false
+# The handlers verify access tokens with auth.getUser (supports new signing keys).
+[functions.checkout]
+verify_jwt = false
+[functions.stripe-webhook]
+verify_jwt = false
+# Webhook authenticates Stripe's raw-body HMAC instead of Supabase JWT.

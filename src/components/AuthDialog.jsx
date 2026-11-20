@@ -1,3 +1,4 @@
+import { authReturnPath, localeFromLocation, recoveryPath } from '../lib/market-routes';
 import React, { useState } from "react";
 import {
   ArrowRight,
@@ -10,7 +11,9 @@ import {
 } from "lucide-react";
 import { Button, Modal } from "./ui";
 import { useI18n } from "../i18n";
-import { authConfigured, authError, supabase } from "../lib/auth";
+import { authConfigured, authError, supabase, signInWithSocial } from "../lib/auth";
+
+import { socialProviders, providerNames } from '../lib/services';
 
 function GoogleIcon() {
   return (
@@ -40,6 +43,8 @@ export default function AuthDialog({
   onGuest,
   onPasswordUpdated,
   embedded = false,
+  reason,
+  beforeAuth,
 }) {
   const { copy } = useI18n();
   const c = copy.auth;
@@ -76,12 +81,13 @@ export default function AuthDialog({
     }
     setBusy(true);
     try {
+      if (mode === "login" || mode === "signup") await beforeAuth?.();
       let result;
       if (mode === "signup") {
         result = await supabase.auth.signUp({
           email: email.trim(),
           password,
-          options: { emailRedirectTo: `${location.origin}/#builder` },
+          options: { emailRedirectTo: `${location.origin}${authReturnPath(localeFromLocation(location))}` },
         });
         if (result.error) throw result.error;
         if (result.data.user?.identities?.length === 0) {
@@ -92,6 +98,7 @@ export default function AuthDialog({
           setSuccess(c.loginSuccess);
           setPassword("");
           setConfirm("");
+          onClose();
         } else {
           setSuccess(c.signupSuccess);
           setPassword("");
@@ -106,7 +113,7 @@ export default function AuthDialog({
         onClose();
       } else if (mode === "reset") {
         result = await supabase.auth.resetPasswordForEmail(email.trim(), {
-          redirectTo: `${location.origin}/reset-password`,
+          redirectTo: `${location.origin}${recoveryPath(localeFromLocation(location))}`,
         });
         if (result.error) throw result.error;
         setSuccess(c.resetSuccess);
@@ -124,16 +131,14 @@ export default function AuthDialog({
       setBusy(false);
     }
   };
-  const google = async () => {
+  const oauth = async (provider) => {
     if (!authConfigured) return;
     setBusy(true);
     setError("");
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: `${location.origin}/#builder` },
-      });
-      if (error) throw error;
+      // Flush the current editor state before Supabase navigates away.
+      await beforeAuth?.();
+      await signInWithSocial(provider, supabase);
     } catch (err) {
       setError(authError(err, copy));
       setBusy(false);
@@ -181,32 +186,15 @@ export default function AuthDialog({
   );
   const content = (
     <div className="auth-body">
-      <span className="auth-symbol">
-        <FileSymbol />
-      </span>
+      {embedded && <div className="auth-brand"><span><FileSymbol /></span>{copy.common.brand}</div>}
       <h2>{title}</h2>
       <p className="auth-subtitle">{c.subtitle}</p>
+      {reason === "pdf" && <p className="auth-notice">{c.pdfMessage}</p>}
       {!authConfigured && (
         <div className="auth-notice" role="status">
           <CircleAlert size={18} />
           <span>{c.unavailable}</span>
         </div>
-      )}
-      {["login", "signup"].includes(mode) && (
-        <>
-          <button
-            type="button"
-            className="google-btn"
-            onClick={google}
-            disabled={busy || !authConfigured}
-          >
-            <GoogleIcon />
-            {c.google}
-          </button>
-          <div className="auth-divider">
-            <span>{c.divider}</span>
-          </div>
-        </>
       )}
       <form onSubmit={submit}>
         {mode !== "update" && (
@@ -266,6 +254,12 @@ export default function AuthDialog({
           <ArrowRight size={17} />
         </Button>
       </form>
+      {["login", "signup"].includes(mode) && socialProviders.length > 0 && <>
+        <div className="auth-divider"><span>{c.divider}</span></div>
+        {socialProviders.map(provider => <button key={provider} type="button" className="google-btn" onClick={() => oauth(provider)} disabled={busy || !authConfigured}>
+          {provider === 'google' && <GoogleIcon/>}{provider === 'google' ? c.google : `${providerNames[provider]}で続ける`}
+        </button>)}
+      </>}
       {mode === "login" || mode === "signup" ? (
         <p className="auth-switch">
           {mode === "login" ? c.noAccount : c.hasAccount}
@@ -287,7 +281,7 @@ export default function AuthDialog({
       )}
       <div className="auth-guest">
         <button type="button" onClick={onGuest}>
-          {c.guestLink}
+          {reason === "pdf" ? c.downloadAnyway : c.guestLink}
           <ArrowRight size={15} />
         </button>
         <p>{c.storage}</p>
@@ -295,9 +289,9 @@ export default function AuthDialog({
     </div>
   );
   return embedded ? (
-    <section className="auth-dialog recovery-card">{content}</section>
+    <section className="auth-dialog auth-dialog-current recovery-card">{content}</section>
   ) : (
-    <Modal title={copy.common.brand} className="auth-dialog" onClose={onClose}>
+    <Modal title={<span className="auth-brand"><span><FileSymbol /></span>{copy.common.brand}</span>} className="auth-dialog auth-dialog-current" onClose={onClose}>
       {content}
     </Modal>
   );

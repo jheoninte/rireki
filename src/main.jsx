@@ -1,36 +1,34 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
-  ArrowRight,
   ArrowUpRight,
-  Check,
   CheckCircle2,
   ChevronDown,
   Download,
-  FileText,
   Globe2,
-  LayoutTemplate,
-  Leaf,
-  LockKeyhole,
   LogOut,
   Menu,
-  Monitor,
-  PencilLine,
-  Plus,
-  ShieldCheck,
-  Smartphone,
-  Sparkles,
   X,
-  ZoomIn,
 } from "lucide-react";
 import { I18nProvider, useI18n } from "./i18n";
 import { supabase } from "./lib/auth";
+import { templates } from "./lib/services";
+import { isLegacyEditorPath } from "./lib/routes";
+import { initialTemplate, resumeMarket } from "./lib/resume-markets";
 import { readAuthRoute } from "./lib/auth-route";
-import { Button, Logo, Modal, SectionTitle } from "./components/ui";
+import { Button, Logo, Modal } from "./components/ui";
 import Resume from "./components/Resume";
 import Builder from "./components/Builder";
+import Landing from "./components/Landing";
 import AuthDialog from "./components/AuthDialog";
+import MarketNavigation from './components/MarketNavigation';
+import { localeFromLocation, marketHome, isEditorPath, recoveryPath } from './lib/market-routes';
 import "./styles.css";
+import "./unified.css";
+import "./japan.css";
+import './korea.css';
+import './site-refresh.css';
+import './english.css';
 
 export function App() {
   const { copy, locale } = useI18n();
@@ -40,36 +38,47 @@ export function App() {
   const [checkingRecovery, setCheckingRecovery] = useState(
     () => readAuthRoute(location).exchanging,
   );
-  const [builder, setBuilder] = useState(location.hash === "#builder"),
+  const [builder, setBuilder] = useState(isEditorPath(location.pathname) || location.hash === "#builder"),
     [preview, setPreview] = useState(null),
-    [authMode, setAuthMode] = useState(null),
+    [authMode, setAuthMode] = useState(() => { const mode = new URLSearchParams(location.search).get("auth"); return ["login", "signup"].includes(mode) ? mode : null; }),
     [menu, setMenu] = useState(false),
     [accountMenu, setAccountMenu] = useState(false),
     [session, setSession] = useState(null),
     [authNotice, setAuthNotice] = useState(""),
     [passwordUpdated, setPasswordUpdated] = useState(false),
     [loggingOut, setLoggingOut] = useState(false);
-  const accountRef = useRef();
-  const [variant, setVariant] = useState(() => {
-    try {
-      return localStorage.getItem("resumemaker-style") === "modern"
-        ? "modern"
-        : "classic";
-    } catch {
-      return "classic";
+  const accountRef = useRef(),
+    builderActions = useRef();
+  const [exportBusy, setExportBusy] = useState(false);
+  const [authRequest, setAuthRequest] = useState(null);
+  const requestLogin = (options = {}) => {
+    setAuthRequest(options);
+    setAuthMode("login");
+  };
+  const closeAuth = () => {
+    authRequest?.onDismiss?.();
+    setAuthRequest(null);
+    setAuthMode(null);
+  };
+  useEffect(() => {
+    if (session && !recovery) {
+      setAuthMode(null);
+      setAuthRequest(null);
     }
-  });
+  }, [session, recovery]);
+  const [variant, setVariant] = useState(() => initialTemplate(locale, location.search));
   useEffect(() => {
     try {
       localStorage.setItem("resumemaker-style", variant);
+      localStorage.setItem(`resumemaker-style:${locale}`, variant);
     } catch {
       /* The editor handles storage errors. */
     }
-  }, [variant]);
+  }, [variant, locale]);
   useEffect(() => {
     const route = () => {
       const hash = location.hash;
-      setBuilder(hash === "#builder");
+      setBuilder(hash === "#builder" || isEditorPath(location.pathname));
       setMenu(false);
       if (readAuthRoute(location).recovery) setRecovery(true);
       if (hash && hash !== "#builder")
@@ -92,7 +101,7 @@ export function App() {
     const recoveryToken = recovery
       ? new URLSearchParams(location.search).get("token_hash")
       : null;
-    if (recoveryToken) history.replaceState(null, "", "/reset-password");
+    if (recoveryToken) history.replaceState(null, "", recoveryPath(locale));
     const initialization = recoveryToken
       ? supabase.auth.verifyOtp({ token_hash: recoveryToken, type: "recovery" })
       : supabase.auth.getSession();
@@ -163,8 +172,8 @@ export function App() {
     setPreview(null);
     setMenu(false);
     setRecovery(false);
-    if (location.pathname === "/reset-password")
-      history.replaceState(null, "", "/");
+    if (/^\/reset-password\/?$/.test(location.pathname))
+      history.replaceState(null, "", marketHome(locale));
     location.hash = "builder";
     setBuilder(true);
     window.scrollTo(0, 0);
@@ -172,9 +181,9 @@ export function App() {
   const home = (e) => {
     e?.preventDefault();
     setRecovery(false);
-    if (location.pathname === "/reset-password")
-      history.replaceState(null, "", "/");
-    location.hash = "";
+    if (/^\/reset-password\/?$/.test(location.pathname))
+      history.replaceState(null, "", marketHome(locale));
+    location.assign(marketHome(locale));
     setBuilder(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -200,12 +209,20 @@ export function App() {
   const nav = Object.entries(copy.nav);
   return (
     <>
-      <header className="site-header">
+      <header
+        className={`site-header ${locale === "ja" ? "japanese-site-header" : "korean-site-header"} ${builder && !recovery ? "editor-header" : ""}`}
+      >
         <div className="header-inner">
           <Logo onClick={home} />
+          {builder && !recovery && (
+            <div className="editor-document-name">
+              {copy.unified.document}
+              <small>{copy.unified.draft}</small>
+            </div>
+          )}
           <nav className="header-nav" aria-label={copy.common.menu}>
             {nav.map(([key, label]) => (
-              <a key={key} href={`#${key}`} onClick={() => setBuilder(false)}>
+              <a key={key} href={`${marketHome(locale)}#${key}`} onClick={() => setBuilder(false)}>
                 {label}
               </a>
             ))}
@@ -249,15 +266,36 @@ export function App() {
               <button
                 type="button"
                 className="header-login"
-                onClick={() => setAuthMode("login")}
+                onClick={() => requestLogin()}
               >
                 {copy.common.login}
               </button>
             )}
-            <Button className="header-create" onClick={() => start()}>
-              {copy.common.create}
-              <ArrowUpRight size={15} />
-            </Button>
+            {builder && !recovery ? (
+              <>
+                <Button
+                  secondary
+                  className="header-save"
+                  onClick={() => builderActions.current?.save()}
+                  disabled={exportBusy}
+                >
+                  {copy.unified.save}
+                </Button>
+                <Button
+                  className="header-export"
+                  onClick={() => builderActions.current?.download()}
+                  disabled={exportBusy}
+                >
+                  <Download size={15} />
+                  {exportBusy ? copy.builder.preparing : copy.common.pdf}
+                </Button>
+              </>
+            ) : (
+              <Button className="header-create" onClick={() => start(resumeMarket(locale).defaultTemplate)}>
+                {copy.common.create}
+                <ArrowUpRight size={15} />
+              </Button>
+            )}
             <button
               type="button"
               className="icon-btn mobile-menu-toggle"
@@ -274,7 +312,7 @@ export function App() {
             {nav.map(([key, label]) => (
               <a
                 key={key}
-                href={`#${key}`}
+                href={`${marketHome(locale)}#${key}`}
                 onClick={() => {
                   setBuilder(false);
                   setMenu(false);
@@ -298,6 +336,7 @@ export function App() {
             )}
           </nav>
         )}
+        <MarketNavigation />
       </header>
       {authNotice && (
         <div className="global-notice" role="alert">
@@ -316,8 +355,12 @@ export function App() {
         <div className="global-notice success" role="status">
           <CheckCircle2 size={20} aria-hidden="true" />
           <span>{copy.auth.updateLoginSuccess}</span>
-          <button className="icon-btn" type="button"
-            aria-label={copy.common.close} onClick={() => setPasswordUpdated(false)}>
+          <button
+            className="icon-btn"
+            type="button"
+            aria-label={copy.common.close}
+            onClick={() => setPasswordUpdated(false)}
+          >
             <X size={16} />
           </button>
         </div>
@@ -341,329 +384,21 @@ export function App() {
               onGuest={() => start()}
             />
           )}
-          <a href="/">{copy.common.home}</a>
+          <a href={marketHome(locale)}>{copy.common.home}</a>
         </main>
-      ) : builder ? (
+      ) : builder && resumeMarket(locale).published ? (
         <Builder
-          key={locale}
+          key={`${locale}:${session?.user.id || "guest"}`}
+          session={session}
+          actionsRef={builderActions}
+          onBusyChange={setExportBusy}
+          onLogin={requestLogin}
           onHome={home}
           variant={variant}
           setVariant={setVariant}
         />
       ) : (
-        <main>
-          <section className="hero">
-            <div className="hero-inner">
-              <div className="hero-copy">
-                <span className="hero-badge">
-                  <span />
-                  {copy.hero.badge}
-                </span>
-                <h1>
-                  {copy.hero.line1}
-                  <br />
-                  <span>{copy.hero.line2}</span>
-                </h1>
-                <p className="hero-description">{copy.hero.description}</p>
-                <div className="hero-buttons">
-                  <Button onClick={() => start()}>
-                    {copy.common.start}
-                    <ArrowUpRight size={19} />
-                  </Button>
-                  <a className="hero-template-link" href="#templates">
-                    {copy.hero.templates}
-                    <ArrowRight size={16} />
-                  </a>
-                </div>
-                <p className="hero-note">{copy.hero.note}</p>
-                <div className="hero-checks">
-                  {copy.hero.checks.map((text) => (
-                    <span key={text}>
-                      <Check size={14} />
-                      {text}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="hero-art">
-                <div className="art-grid" />
-                <div className="art-circle" />
-                <span className="art-spark">✳</span>
-                <div className="paper-back" />
-                <div className="hero-document">
-                  <div className="document-top">
-                    <span />
-                    <span />
-                    <span />
-                    <small>{copy.hero.resumeTag}</small>
-                  </div>
-                  <div className="hero-paper-wrap">
-                    <Resume example />
-                  </div>
-                </div>
-                <div className="mini-editor">
-                  <div className="mini-editor-heading">
-                    <PencilLine size={15} />
-                    <span>{copy.hero.editLabel}</span>
-                  </div>
-                  <label>{copy.hero.editName}</label>
-                  <div className="mini-input">
-                    {copy.hero.editValue}
-                    <span />
-                  </div>
-                  <div className="mini-progress">
-                    <i />
-                  </div>
-                  <small>
-                    {copy.hero.editProgress}
-                    <span>75%</span>
-                  </small>
-                </div>
-                <div className="art-saved">
-                  <span>
-                    <Check size={19} />
-                  </span>
-                  <div>
-                    <strong>{copy.hero.floatingTitle}</strong>
-                    <p>{copy.hero.floatingText}</p>
-                  </div>
-                </div>
-                <div className="art-caption">
-                  <span />
-                  {copy.hero.sample}
-                </div>
-              </div>
-            </div>
-            <div className="hero-scroll">
-              <span />
-              {copy.hero.scroll}
-            </div>
-          </section>
-          <div className="trust-strip">
-            <div>
-              {copy.strip.map((text, i) => {
-                const Icon = [ShieldCheck, Smartphone, LockKeyhole, Download][
-                  i
-                ];
-                return (
-                  <span key={text}>
-                    <Icon size={17} strokeWidth={1.5} />
-                    {text}
-                  </span>
-                );
-              })}
-            </div>
-          </div>
-          <section className="how-section section-container" id="how">
-            <SectionTitle
-              eyebrow={copy.how.eyebrow}
-              title={copy.how.title}
-              description={copy.how.description}
-            />
-            <div className="how-grid">
-              {copy.how.items.map((item, i) => {
-                const Icon = [PencilLine, LayoutTemplate, Download][i];
-                return (
-                  <article className="how-card" key={item.title}>
-                    <div className="how-card-top">
-                      <span className="step-num">0{i + 1}</span>
-                      <span className="how-icon">
-                        <Icon size={26} strokeWidth={1.4} />
-                      </span>
-                    </div>
-                    <h3>{item.title}</h3>
-                    <p>{item.text}</p>
-                    {i < 2 && (
-                      <span className="how-arrow">
-                        <ArrowRight size={19} />
-                      </span>
-                    )}
-                  </article>
-                );
-              })}
-            </div>
-          </section>
-          <section className="template-section" id="templates">
-            <div className="section-container">
-              <div className="template-section-heading">
-                <SectionTitle
-                  left
-                  eyebrow={copy.templates.eyebrow}
-                  title={copy.templates.title}
-                  description={copy.templates.description}
-                />
-                <span className="free-note">
-                  <CheckCircle2 size={16} />
-                  {copy.templates.all}
-                </span>
-              </div>
-              <div className="template-grid">
-                {["classic", "modern"].map((style, i) => (
-                  <article className={`template-card ${style}`} key={style}>
-                    <button
-                      type="button"
-                      className="template-visual"
-                      aria-label={`${copy.templates[style]} ${copy.templates.expand}`}
-                      onClick={() => setPreview(style)}
-                    >
-                      {i === 0 && (
-                        <span className="popular-tag">
-                          <Sparkles size={12} />
-                          {copy.templates.popular}
-                        </span>
-                      )}
-                      <div className="template-paper-wrap">
-                        <Resume variant={style} example />
-                      </div>
-                      <span className="template-zoom">
-                        <ZoomIn size={16} />
-                        {copy.templates.expand}
-                      </span>
-                    </button>
-                    <div className="template-info">
-                      <div>
-                        <span className="template-number">0{i + 1}</span>
-                        <h3>{copy.templates[style]}</h3>
-                        <span className="template-size">A4</span>
-                      </div>
-                      <p>
-                        {i === 0
-                          ? copy.templates.classicDescription
-                          : copy.templates.modernDescription}
-                      </p>
-                      <button
-                        type="button"
-                        className="template-use"
-                        onClick={() => start(style)}
-                      >
-                        {copy.templates.use}
-                        <ArrowUpRight size={17} />
-                      </button>
-                    </div>
-                  </article>
-                ))}
-              </div>
-              <p className="template-disclaimer">{copy.templates.disclaimer}</p>
-            </div>
-          </section>
-          <section className="features-section section-container" id="features">
-            <div className="feature-illustration">
-              <span className="feature-card-overline">
-                {copy.features.cardTag}
-              </span>
-              <div className="feature-paper-stack">
-                <div />
-                <div />
-                <div>
-                  <span className="feature-paper-icon">
-                    <Leaf size={33} strokeWidth={1.3} />
-                  </span>
-                  <span className="feature-paper-line" />
-                  <span className="feature-paper-line short" />
-                  <div className="feature-paper-check">
-                    <Check size={20} />
-                  </div>
-                </div>
-                <span className="feature-orbit" />
-              </div>
-              <h3>{copy.features.cardTitle}</h3>
-              <p>{copy.features.cardText}</p>
-              <span className="feature-spark">✳</span>
-            </div>
-            <div className="features-copy">
-              <SectionTitle
-                left
-                eyebrow={copy.features.eyebrow}
-                title={copy.features.title}
-                description={copy.features.description}
-              />
-              <div className="feature-list">
-                {copy.features.items.map((item, i) => {
-                  const Icon = [SaveSymbol, Smartphone, Download][i];
-                  return (
-                    <div key={item.title}>
-                      <span>
-                        <Icon size={19} strokeWidth={1.5} />
-                      </span>
-                      <div>
-                        <h3>{item.title}</h3>
-                        <p>{item.text}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-          <section className="privacy-strip">
-            <ShieldCheck size={20} strokeWidth={1.5} />
-            <p>{copy.features.privacy}</p>
-            <span>PRIVATE BY DESIGN</span>
-          </section>
-          <section className="faq-section section-container" id="faq">
-            <SectionTitle eyebrow={copy.faq.eyebrow} title={copy.faq.title} />
-            <div className="faq-list">
-              {copy.faq.items.map(([question, answer], i) => (
-                <details key={question}>
-                  <summary>
-                    <span className="faq-number">0{i + 1}</span>
-                    <span>{question}</span>
-                    <Plus size={18} />
-                  </summary>
-                  <p>{answer}</p>
-                </details>
-              ))}
-            </div>
-          </section>
-          <section className="bottom-cta">
-            <div className="cta-ring ring-one" />
-            <div className="cta-ring ring-two" />
-            <span className="overline">{copy.cta.eyebrow}</span>
-            <h2>{copy.cta.title}</h2>
-            <p>{copy.cta.description}</p>
-            <Button onClick={() => start()}>
-              {copy.common.start}
-              <ArrowUpRight size={19} />
-            </Button>
-            <span className="cta-guest">{copy.hero.badge}</span>
-          </section>
-          <footer className="site-footer">
-            <div className="footer-top">
-              <div>
-                <Logo onClick={home} />
-                <p>{copy.footer.description}</p>
-              </div>
-              <div className="footer-links">
-                <a href="/privacy.html">{copy.footer.privacy}</a>
-                {nav.map(([key, label]) => (
-                  <a href={`#${key}`} key={key}>
-                    {label}
-                  </a>
-                ))}
-              </div>
-              <div className="footer-account">
-                <button type="button" onClick={() => setAuthMode("signup")}>
-                  {copy.footer.account}
-                  <ArrowUpRight size={14} />
-                </button>
-                <button type="button" onClick={() => setAuthMode("login")}>
-                  {copy.common.login}
-                  <ArrowUpRight size={14} />
-                </button>
-              </div>
-            </div>
-            <div className="footer-bottom">
-              <small>
-                © {new Date().getFullYear()} rireki. {copy.footer.copyright}
-              </small>
-              <span>
-                <Globe2 size={13} />
-                {copy.footer.localeNote}
-              </span>
-              <span>{copy.common.tagline}</span>
-            </div>
-          </footer>
-        </main>
+        <Landing setPreview={setPreview} />
       )}
       {preview && (
         <Modal
@@ -687,27 +422,30 @@ export function App() {
         <AuthDialog
           key={authMode}
           initialMode={authMode}
+          reason={authRequest?.reason}
+          beforeAuth={() => builderActions.current?.prepareAuth()}
           onPasswordUpdated={finishPasswordUpdate}
-          onClose={() => setAuthMode(null)}
-          onGuest={() => start()}
+          onClose={closeAuth}
+          onGuest={() => {
+            const continueAsGuest = authRequest?.onGuest;
+            setAuthMode(null);
+            setAuthRequest(null);
+            if (continueAsGuest) continueAsGuest();
+            else if (!builder) start();
+          }}
         />
       )}
     </>
   );
 }
-function SaveSymbol(props) {
-  return (
-    <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" />
-      <path d="M17 21v-8H7v8M7 3v5h8" />
-    </svg>
-  );
-}
 
 const appRoot = document.getElementById("root");
-if (appRoot) {
+if (isLegacyEditorPath(location.pathname)) {
+  // Also works on SPA/dev hosts that serve the root HTML for directory URLs.
+  location.replace("/#builder");
+} else if (appRoot) {
   createRoot(appRoot).render(
-    <I18nProvider locale="ja">
+    <I18nProvider locale={localeFromLocation(location)}>
       <App />
     </I18nProvider>,
   );

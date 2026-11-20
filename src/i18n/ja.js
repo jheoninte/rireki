@@ -1,11 +1,23 @@
+import japan from './japan-ja';
+import applicantSamples from './applicant-samples-ja';
+import { japaneseTemplates } from '../lib/japanese-templates';
+import builderFeatures from './builder-features-ja';
+import unified from './unified-ja';
+import workspace from './workspace-ja';
 export default {
+  japan,
+  builderFeatures,
+  workspace,
+  unified,
   meta: {
-    title: "rireki — あなたらしさが、伝わる履歴書を。",
+    title: "履歴書作成ツール｜新卒・転職・アルバイトの履歴書を無料作成",
     description:
-      "登録不要・無料の履歴書作成サービス。ガイドに沿って入力するだけで、きれいな履歴書をPDF・Wordでダウンロードできます。",
+      "履歴書・職務経歴書を登録不要で無料作成。写真・ふりがな付きの日本式書式、ブラウザ自動保存、PDF・Wordダウンロードに対応。エンジニア・デザイナー向け書式もプレビューできます。",
   },
   common: {
-    brand: "rireki",
+    marketNav: "応募先の国・言語を選択",
+    comingSoon: "準備中",
+    brand: "履歴書作成ツール",
     tagline: "次の一歩を、あなたらしく。",
     locale: "日本語",
     login: "ログイン",
@@ -38,7 +50,7 @@ export default {
     faq: "よくある質問",
   },
   hero: {
-    badge: "登録不要・ずっと無料",
+    badge: "登録不要・基本書式は無料",
     line1: "あなたらしさが、",
     line2: "伝わる履歴書を。",
     description:
@@ -74,7 +86,7 @@ export default {
       },
       {
         title: "見ながら、整える",
-        text: "入力した内容をその場で確認。\n好きなテンプレートを選べます。",
+        text: "写真の位置や入力した内容を確認。\n厚生労働省の様式に沿って整えます。",
       },
       {
         title: "保存して、次の一歩へ",
@@ -83,15 +95,26 @@ export default {
     ],
   },
   templates: {
+    ...Object.fromEntries(japaneseTemplates.flatMap(template => [[template.id, template.name], [`${template.id}Description`, template.description]])),
     eyebrow: "A GOOD FIRST IMPRESSION",
     title: "伝えたいことが、すっと届く。",
     description:
       "採用担当者が読みやすい、すっきりとしたデザイン。\nあなたに合う一枚を選んでください。",
-    all: "すべて無料で使えます",
+    all: "履歴書・職務経歴書は無料",
     classic: "スタンダード",
-    modern: "ナチュラル",
+    rirekisho: "一般・転職用 履歴書",
+    "work-history": "職務経歴書",
+    rirekishoDescription: "厚生労働省の様式をもとにしたA4・2ページ。写真・ふりがな・学歴職歴・免許資格に対応。",
+    "work-historyDescription": "職務要約と担当業務・実績を、読みやすい専用書式に。",
+    developerDescription: "技術スタックをサイドバーに、開発経験を本文に。PRO書式。",
+    designerDescription: "ポートフォリオへの導線と制作経験が主役のPRO書式。",
+    modern: "A4 モダン",
+    developer: "エンジニア",
+    designer: "デザイナー",
+    marketing: "マーケター",
+    ats: "テキスト重視",
     classicDescription: "きちんと、端正に。どんな応募先にも。",
-    modernDescription: "やわらかな色で、あなたらしい印象に。",
+    modernDescription: "余白とブルーのアクセントで、経験が伝わる一枚に。",
     popular: "人気のテンプレート",
     use: "このテンプレートを使う",
     expand: "拡大して見る",
@@ -120,7 +143,7 @@ export default {
     cardTitle: "小さな経験も、\nあなたの強みになる。",
     cardText: "一行ずつ、あなたらしい履歴書へ。",
     cardTag: "MADE FOR YOUR NEXT STEP",
-    privacy: "履歴書の内容はサーバーに送信せず、ご利用のブラウザに保存します。",
+    privacy: "ゲストは端末に保存。ログイン後は、クラウド保存を選択できます。",
   },
   faq: {
     eyebrow: "GOOD TO KNOW",
@@ -128,7 +151,7 @@ export default {
     items: [
       [
         "本当に無料で使えますか？",
-        "はい。履歴書の作成・編集・PDFとWordのダウンロードまで、すべて無料です。会員登録をせずにご利用いただけます。",
+        "履歴書・職務経歴書の作成と編集、PDF・Wordのダウンロードは無料です。追加のAIコーチングは有料となる場合があります。",
       ],
       [
         "会員登録は必要ですか？",
@@ -136,7 +159,7 @@ export default {
       ],
       [
         "途中まで書いた内容は保存されますか？",
-        "同じ端末・ブラウザで続きを編集できます。ブラウザのデータ削除やシークレットモードの終了で消える場合があります。完成後はファイルをダウンロードしてください。アカウントにログインしても、端末間の同期は行いません。",
+        "同じ端末・ブラウザで続きを編集できます。ブラウザのデータ削除やシークレットモードの終了で消える場合があります。完成後はファイルをダウンロードしてください。ログインしてクラウド保存を選ぶと、別の端末から読み込めます。",
       ],
       [
         "スマートフォンでも使えますか？",
@@ -144,7 +167,7 @@ export default {
       ],
       [
         "入力した個人情報はどう扱われますか？",
-        "履歴書の内容と写真はご利用のブラウザ内に保存され、サーバーには送信されません。会員登録に使用するメールアドレスなどの認証情報は認証サービスで管理されます。共用端末では利用後に履歴書データをリセットしてください。",
+        "ゲストの履歴書はブラウザに保存します。クラウド保存を選ぶとSupabaseへ、AIを利用すると選んだ文章と職種をOpenAIへ送信します。会員登録に使用するメールアドレスなどの認証情報は認証サービスで管理されます。共用端末では利用後に履歴書データをリセットしてください。",
       ],
     ],
   },
@@ -161,7 +184,13 @@ export default {
     copyright: "All rights reserved.",
     localeNote: "日本語版",
   },
+  documents: { technicalSkills: "技術スタック", designTools: "デザインツール・スキル", selectedPortfolio: "PORTFOLIO / 制作実績", portfolioHint: "ポートフォリオURLを入力すると、ここに表示されます。", detailedHistory: "職務経歴・担当業務・実績", applicableSkills: "活かせる経験・知識・技術" },
   fields: {
+    addressFurigana: "現住所のふりがな",
+    documentDate: "記入日",
+    qualifications: "免許・資格",
+    preferences: "本人希望記入欄",
+    summary: "職務要約",
     name: "氏名",
     english: "ふりがな",
     birth: "生年月日",
@@ -171,16 +200,25 @@ export default {
     title: "あなたを紹介するひとこと",
     education: "学歴",
     careers: "職歴",
-    skills: "免許・資格・スキル",
+    skills: "スキル・使用ツール",
+    portfolio: "ポートフォリオ・GitHub URL",
     intro: "自己PR",
-    motivation: "志望動機・本人希望",
+    motivation: "志望動機",
     period: "期間",
     school: "学校名",
     major: "学部・学科・卒業区分",
     company: "会社名",
     role: "担当業務・実績",
+    position: "職種・役職",
   },
   placeholders: {
+    postalCode: "例：100-0001",
+    contactPostalCode: "例：530-0001",
+    addressFurigana: "例：とうきょうと しぶやく",
+    documentDate: "例：2026年11月20日",
+    qualifications: "例：2023年6月 基本情報技術者試験 合格",
+    preferences: "勤務条件などの希望。特になければ「貴社の規定に従います」。",
+    summary: "これまでの職務経験・専門領域・主な実績を3〜5行でまとめましょう。",
     name: "例：山田 花子",
     english: "例：やまだ はなこ",
     birth: "例：1998年3月15日",
@@ -188,11 +226,13 @@ export default {
     email: "例：hanako@example.com",
     address: "例：東京都渋谷区神宮前1-2-3",
     title: "例：人の気持ちに寄り添うWebデザイナー",
+    portfolio: "https://example.com/portfolio",
     period: "例：2022年4月 〜 現在",
     school: "例：東京デザイン大学",
     major: "例：情報デザイン学科 卒業",
     company: "例：株式会社サンプル",
     role: "担当した業務や、工夫したことを書いてみましょう。",
+    position: "例：プロダクトデザイナー",
     skills: "資格名・取得年月、語学力、使えるツールなど",
     intro: "これまでの経験や、あなたの強みを教えてください。",
     motivation: "応募の理由や、これから取り組みたいことを書いてみましょう。",
@@ -250,13 +290,13 @@ export default {
     style: "テンプレート",
     preview: "リアルタイムプレビュー",
     previewMobile: "履歴書をプレビュー",
-    privacy: "履歴書はサーバーに送信されません。",
+    privacy: "クラウド保存・AIは選択したときだけ送信します。",
     localNote: "作成データはこの端末・ブラウザに保存されます。",
     persistence: "同じブラウザで、いつでも続きから。",
     reset: "入力内容をリセット",
     resetTitle: "入力内容をリセットしますか？",
     resetText:
-      "このブラウザに保存された履歴書が削除されます。\n必要なファイルは先にダウンロードしてください。",
+      "入力内容を空にします。クラウド自動保存中はクラウドの内容も空になります。\n必要なファイルは先にダウンロードしてください。",
     resetApply: "リセットする",
     preparing: "ファイルを作成しています…",
     downloadHint: "PDFは画像形式、Wordは編集できる形式です。",
@@ -275,8 +315,8 @@ export default {
     reset: "入力内容をリセットしました。",
   },
   auth: {
-    loginTitle: "おかえりなさい。",
-    signupTitle: "次の一歩を、ここから。",
+    loginTitle: "ログインして、履歴書の続きをいつでも。",
+    signupTitle: "無料ではじめて、大切な履歴書を手元に。",
     resetTitle: "パスワードを再設定",
     recoveryHelp:
       "メール内のリンクを開くと、新しいパスワードを設定できます。期限切れ・使用済みの場合は、ここから新しいメールを送信してください。",
@@ -285,15 +325,19 @@ export default {
     recoveryChecking: "認証リンクを確認しています…",
     updateTitle: "新しいパスワード",
     subtitle: "履歴書づくりは、登録なしでも無料です。",
-    google: "Googleアカウントで続ける",
+    google: "Googleですぐにはじめる",
+    nudge: "書きかけの内容を失わないように、安全に保存しませんか？",
+    nudgeAction: "ログインして続きを残す",
+    pdfMessage: "ログインすると、透かしなしでダウンロードできます。クラウド保存を使えば、ほかの端末でも履歴書を管理できます。",
+    downloadAnyway: "このままダウンロードする",
     divider: "または、メールアドレスで",
     email: "メールアドレス",
     password: "パスワード",
     confirm: "パスワード（確認）",
     passwordHint: "8文字以上で入力してください",
     emailPlaceholder: "you@example.com",
-    loginSubmit: "ログイン",
-    signupSubmit: "無料でアカウントを作成",
+    loginSubmit: "ログインして履歴書を続ける",
+    signupSubmit: "無料ではじめて履歴書を残す",
     resetSubmit: "再設定メールを送信",
     updateSubmit: "パスワードを更新",
     forgot: "パスワードを忘れた方",
@@ -323,12 +367,45 @@ export default {
     unavailable:
       "アカウント機能はただいま準備中です。履歴書は登録せずに作成・ダウンロードできます。",
     storage:
-      "履歴書はブラウザに保存されます。ログインによる端末間の同期には対応していません。",
+      "ゲストの下書きはこの端末に保存。ログイン後にクラウド保存を選ぶと、他の端末で読み込めます。",
     guestLink: "登録せずに履歴書をつくる",
     logoutError: "ログアウトできませんでした。もう一度お試しください。",
     callbackError: "ログインを完了できませんでした。もう一度お試しください。",
   },
+  templateSamples: {
+    ...applicantSamples,
+    rirekisho: {
+      age: "28",
+      education: [
+        { period: "2016年4月", school: "サンプル大学", major: "経済学部 入学" },
+        { period: "2020年3月", school: "サンプル大学", major: "経済学部 卒業" },
+      ],
+      careers: [
+        { period: "2020年4月", company: "株式会社サンプル 入社", position: "営業部に配属", role: "" },
+        { period: "2026年11月", company: "現在に至る", position: "", role: "" },
+        { period: "", company: "以上", position: "", role: "" },
+      ],
+      qualifications: "2019年8月 普通自動車第一種運転免許 取得\n2022年6月 日商簿記検定試験2級 合格",
+      motivation: "お客様の課題を丁寧に捉える姿勢に共感し、貴社を志望しました。営業経験を活かし、信頼関係を大切にした提案で貢献したいと考えています。",
+      intro: "相手の話を聞き、チームで解決策を考えることが強みです。",
+    },
+    developer: {
+      title: "フロントエンドエンジニア",
+      skills: "TypeScript, React, Node.js, PostgreSQL, Git, CI/CD",
+      qualifications: "2022年10月 基本情報技術者試験 合格",
+      summary: "Webアプリケーションの設計・開発を5年間担当。ReactとTypeScriptを中心に、フロントエンドからAPI連携まで取り組んできました。",
+      intro: "保守性と使いやすさを大切にし、コードレビューや自動テストを通じてチームの開発品質を高めています。",
+      careers: [{ period: "2021年4月 〜 現在", company: "株式会社サンプル", position: "フロントエンドエンジニア", role: "React / TypeScriptで業務アプリを開発。共通コンポーネントと自動テストを整備し、画面表示の改善に取り組みました。" }],
+      education: [{ period: "2017年4月 〜 2021年3月", school: "サンプル大学", major: "情報工学科 卒業" }],
+      motivation: "これまでのWeb開発経験を活かし、使いやすく安定したサービスづくりに貢献したいと考えています。",
+    },
+  },
   sample: {
+    documentDate: "2026年11月20日",
+    addressFurigana: "とうきょうと しぶやく じんぐうまえ",
+    qualifications: "2020年6月 色彩検定2級 合格",
+    preferences: "貴社の規定に従います。",
+    summary: "Web・アプリのUI/UXデザインに従事。ユーザー調査から画面設計、デザインシステムの整備まで担当してきました。",
     name: "山田 花子",
     english: "やまだ はなこ",
     birth: "1998年3月15日",
@@ -337,6 +414,7 @@ export default {
     address: "東京都渋谷区神宮前1-2-3",
     title: "人の気持ちに寄り添うWebデザイナー",
     photo: "",
+    portfolio: "https://example.com/portfolio",
     education: [
       {
         period: "2016年4月 〜 2020年3月",
@@ -352,7 +430,7 @@ export default {
       },
     ],
     skills:
-      "2020年6月　普通自動車第一種運転免許 取得\nFigma / Illustrator / Photoshop",
+      "Figma, Illustrator, Photoshop",
     intro:
       "相手の気持ちを想像し、使いやすさと美しさを両立することを大切にしています。\nチームとの対話を重ね、課題の発見からデザインの改善まで丁寧に取り組んできました。",
     motivation:

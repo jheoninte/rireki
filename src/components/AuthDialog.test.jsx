@@ -25,12 +25,12 @@ vi.mock("../lib/auth", async (importOriginal) => {
 });
 import AuthDialog from "./AuthDialog";
 const c = ja.auth;
-function setup(mode = "login") {
+function setup(mode = "login", props = {}) {
   const onClose = vi.fn(),
     onGuest = vi.fn();
   render(
     <I18nProvider>
-      <AuthDialog initialMode={mode} onClose={onClose} onGuest={onGuest} />
+      <AuthDialog initialMode={mode} onClose={onClose} onGuest={onGuest} {...props} />
     </I18nProvider>,
   );
   return { user: userEvent.setup(), onClose, onGuest };
@@ -56,6 +56,30 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 describe("optional account authentication", () => {
+  it("preserves editor state before starting the Google redirect", async () => {
+    const beforeAuth = vi.fn(async () => {
+      expect(api.signInWithOAuth).not.toHaveBeenCalled();
+    });
+    const { user } = setup("login", { beforeAuth });
+    await user.click(screen.getByRole("button", { name: c.google, exact: true }));
+    expect(beforeAuth).toHaveBeenCalledOnce();
+    expect(api.signInWithOAuth).toHaveBeenCalledOnce();
+  });
+  it("keeps the editor in place if persisting the draft before OAuth fails", async () => {
+    const { user } = setup("login", { beforeAuth: () => { throw new Error("Storage full"); } });
+    await user.click(screen.getByRole("button", { name: c.google, exact: true }));
+    expect(api.signInWithOAuth).not.toHaveBeenCalled();
+    expect(await screen.findByRole("alert")).toBeTruthy();
+    expect(screen.getByRole("button", { name: c.google }).disabled).toBe(false);
+  });
+  it("shows the PDF benefit and lets guests download from the overlay", async () => {
+    const { user, onGuest } = setup("login", { reason: "pdf" });
+    expect(screen.getByRole("dialog")).toBeTruthy();
+    expect(screen.getByText(c.pdfMessage)).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: c.downloadAnyway }));
+    expect(onGuest).toHaveBeenCalledOnce();
+    expect(api.signInWithOAuth).not.toHaveBeenCalled();
+  });
   it("submits email/password signup and explains email confirmation", async () => {
     const { user } = setup("signup");
     await user.type(screen.getByLabelText(c.email), "new@example.test");

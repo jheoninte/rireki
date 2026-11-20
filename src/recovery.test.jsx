@@ -40,7 +40,7 @@ describe("dedicated password recovery", () => {
     expect(location.pathname).toBe("/");
     expect(location.hash).toBe("#builder");
     expect(screen.queryByRole("button", { name: ja.auth.updateSubmit })).toBeNull();
-    fireEvent.click(screen.getByRole("status").querySelector("button"));
+    fireEvent.click(screen.getByText(ja.auth.updateLoginSuccess).closest('[role="status"]').querySelector("button"));
     expect(screen.queryByText(ja.auth.updateLoginSuccess)).toBeNull();
   });
   it("keeps the update form visible when saving fails", async () => {

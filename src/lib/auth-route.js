@@ -8,7 +8,7 @@ export function readAuthRoute(location) {
     hash.get("error");
   return {
     recovery:
-      location.pathname === "/reset-password" ||
+      /^\/reset-password\/?$/.test(location.pathname) ||
       location.hash === "#reset-password" ||
       hash.get("type") === "recovery" ||
       query.get("type") === "recovery" ||
