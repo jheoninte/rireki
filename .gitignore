@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.deploy/
+*.log
+.env
+.env.*
+!.env.example
+
+# Local account setup screenshots are not source artifacts.
+docs/screenshots/google-auth-setup.jpg
+docs/screenshots/supabase-create.jpg
