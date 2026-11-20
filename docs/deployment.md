@@ -97,3 +97,9 @@ Google OAuth의 승인된 JavaScript 출처에는 `https://rireki-easy.pages.dev
 - 최종 운영 모바일 Lighthouse: 일본어 성능 100, 한국어 100, 영어 99. 접근성·Best Practices·SEO는 세 언어 모두 100. 실사용자 Core Web Vitals나 검색 순위 보장은 아닙니다.
 
 상세 검증 범위와 남은 운영 점검은 `docs/launch-readiness.md`에 기록했습니다. 위 내용은 이전 배포에서 보류했던 DB·인증 설정의 최신 상태입니다.
+
+## 추가 검색 서비스 등록 (2026-11-20)
+
+배포 소스 `a2c2e996a39e6ca9e9727ca057148483de829474`, ZIP `.deploy/rireki-search-registration.zip`(44개 파일). 네이버·Bing·Yandex 소유권 확인 파일과 Bing 메타 태그, IndexNow 소유권 파일을 반영했습니다. 기존 클라우드 활성화 설정을 유지했습니다.
+
+네이버·Bing 소유권 인증 및 사이트맵 제출 완료, Bing에는 3개 언어 홈 URL도 개별 제출했습니다. 다음은 한국어 바로 이력서 등록 신청 접수 완료/심사 대기입니다. Yandex는 소유권 인증을 완료했으나 서비스 장애로 사이트맵 도구가 읽기 전용이어서 추가 제출이 불가능합니다. IndexNow는 3개 홈 URL을 HTTP 202로 접수했으며 키 검증 대기 상태입니다. 각 서비스의 실제 수집·색인은 아직 보장되지 않습니다. 상세 상태와 이후 제출 방법은 `docs/search-registration.md`를 참고하세요.
