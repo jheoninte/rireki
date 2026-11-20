@@ -1,9 +1,15 @@
-import { build, createServer } from 'vite';
+import { build, createServer, loadEnv } from 'vite';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 await build();
+// IndexNow only receives public landing URLs; this ownership token is never used for account data.
+const indexNowKey = loadEnv('production', process.cwd(), 'INDEXNOW_').INDEXNOW_KEY;
+if (indexNowKey) {
+  if (!/^[a-zA-Z0-9-]{8,128}$/.test(indexNowKey)) throw new Error('Invalid IndexNow key');
+  await writeFile(`dist/${indexNowKey}.txt`, indexNowKey);
+}
 const shell = await readFile('dist/index.html', 'utf8');
 const server = await createServer({ server: { middlewareMode: true }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } });
 const escape = value => value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
