@@ -44,3 +44,11 @@
 .ko-standard-section{margin-top:25px}.ko-standard-section>h4{font-size:14px;font-weight:700;color:var(--ko-accent);border-bottom:1px solid #dce5f1;margin:0 0 13px;padding-bottom:9px;letter-spacing:0;break-after:avoid}.ko-standard-section>p,.ko-standard-entry p{font-size:13px;line-height:1.95;margin:0;white-space:pre-wrap}
 .ko-standard-entry{display:grid;grid-template-columns:138px minmax(0,1fr);gap:20px;margin-top:16px;break-inside:avoid}.ko-standard-entry>time{font-size:11px;color:#71839c;padding-top:2px;white-space:pre-wrap}.ko-standard-entry h5{font-size:14px;line-height:1.7;font-weight:700;color:#2c4364;margin:0 0 3px}.ko-standard-entry small{font-size:12px;color:#617897;display:block;margin:0 0 6px}.ko-standard-entry .ko-standard-tools{color:#617897;font-size:11px;margin:3px 0 7px}
 @media(max-width:600px){.modal-backdrop:has(.auth-dialog-current){padding:14px}.auth-dialog-current{border-radius:14px;width:100%;max-height:calc(100dvh - 28px)}.auth-dialog-current .modal-top{padding:18px 20px 14px}.auth-dialog-current .auth-body{padding:6px 20px 22px}.auth-dialog-current .auth-body h2{font-size:23px}.auth-dialog-current .auth-body .field input{font-size:16px}.auth-dialog-current .auth-body .field input::placeholder{font-size:13px}.auth-dialog-current .auth-guest>p{font-size:11px}}
+
+/* Affiliate card: quiet, labelled as PR, shown only after the document is ready. */
+.affiliate-card{margin-top:16px;padding:14px 16px;border:1px dashed #cdd6c9;border-radius:12px;background:#f8f9f5;display:grid;gap:6px}
+.affiliate-card .affiliate-label{justify-self:start;font-size:11px;font-weight:700;letter-spacing:.08em;color:#5b6b62;border:1px solid #cdd6c9;border-radius:4px;padding:1px 6px;background:#fff}
+.affiliate-card strong{font-size:14px}
+.affiliate-card p{margin:0;font-size:12.5px;line-height:1.6;color:#4a5d54}
+.affiliate-card a{margin-top:4px}
+.affiliate-card small{color:#6b7a72;font-size:11px;line-height:1.5}

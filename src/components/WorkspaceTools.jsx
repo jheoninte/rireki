@@ -3,6 +3,7 @@ import { Cloud, Lightbulb, Sparkles, ArrowUpRight } from 'lucide-react';
 import { Button } from './ui';
 import { useI18n } from '../i18n';
 import { commerceEnabled, invoke, readAccount, completion } from '../lib/services';
+import { partnersFor } from '../lib/affiliates';
 
 export function CloudPanel({ cloud, session, onLogin, progress, onImport, onRestore, confirmAction }) {
   const { copy, locale } = useI18n(), c = copy.workspace;
@@ -120,7 +121,8 @@ export function Pricing({ session, accountState, onLogin }) {
 }
 
 export function NextActions() {
-  const { copy } = useI18n(), c = copy.workspace;
+  const { copy, locale } = useI18n(), c = copy.workspace;
+  const partners = partnersFor(locale);
   const affiliate = import.meta.env.VITE_CAREER_PARTNER_URL;
   let partner;
   try { const url = new URL(affiliate); if (url.protocol === 'https:') partner = url.href; } catch { /* Optional partner. */ }
@@ -128,6 +130,13 @@ export function NextActions() {
     <strong>{c.nextTitle}</strong><p>{c.nextDescription}</p>
     <a href={c.jobsUrl || 'https://www.wantedly.com/projects'} target="_blank" rel="noopener noreferrer">{c.jobsLink}<ArrowUpRight size={15}/></a>
     {partner && <><a href={partner} target="_blank" rel="sponsored noopener noreferrer">{c.partnerLink}<ArrowUpRight size={15}/></a><small>{c.affiliateDisclosure}</small></>}
+    {partners.map(partner => <aside className="affiliate-card" key={partner.id} aria-label={partner.title}>
+      <span className="affiliate-label">PR</span>
+      <strong>{partner.title}</strong>
+      <p>{partner.description}</p>
+      {partner.links.map(link => <a key={link.href} href={link.href} target="_blank" rel="sponsored nofollow noopener noreferrer">{link.cta}<ArrowUpRight size={15}/></a>)}
+      <small>{c.affiliateDisclosure}</small>
+    </aside>)}
     <p>{c.noSharing}</p>
     <details><summary>{c.checklist}</summary><ul>{c.checks.map(x => <li key={x}>{x}</li>)}</ul></details>
   </section>;
