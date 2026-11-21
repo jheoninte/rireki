@@ -8,6 +8,10 @@
 
 `rireki`(履歴書)와 `easy`를 조합해 간편한 일본어 이력서 작성 서비스라는 의미를 담았습니다. 무료 `pages.dev` 서브도메인을 사용하며 별도 도메인 구매는 하지 않았습니다. 무료 플랜의 사용량·제한은 Cloudflare 정책을 따릅니다.
 
+## 자동 배포 (GitHub Actions)
+
+`master`에 push하면 `.github/workflows/deploy.yml`이 빌드해 기존 Cloudflare Pages 프로젝트(`rireki-easy`)에 업로드합니다. 주소는 그대로입니다. 필요한 GitHub Secrets: `CLOUDFLARE_API_TOKEN`(Cloudflare Pages: Edit 권한), `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_CLOUD_ENABLED`, `INDEXNOW_KEY`. Supabase 설정이 빌드에 없으면 배포를 중단합니다. 프로덕션 브랜치가 `main`이 아니면 Cloudflare Pages 설정에서 확인하세요.
+
 ## 업데이트
 
 1. `pnpm build`를 실행합니다.
