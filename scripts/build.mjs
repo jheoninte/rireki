@@ -1,5 +1,6 @@
 import { build, createServer, loadEnv } from 'vite';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { buildGuides } from './guides.mjs';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
@@ -72,3 +73,4 @@ try {
   await mkdir('dist/reset-password', { recursive: true });
   await writeFile('dist/reset-password/index.html', shell.replace('<head>', '<head><meta name="robots" content="noindex,nofollow" />'));
 } finally { await server.close(); }
+await buildGuides();

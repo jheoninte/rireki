@@ -184,6 +184,7 @@ export function JapaneseLanding({ setPreview }) {
               </div>
               <div className="footer-links">
                 <a href="/privacy.html">{copy.footer.privacy}</a>
+                {locale === "ja" && <a href="/guide/">書き方ガイド</a>}
                 {nav.map(([key, label]) => (
                   <a href={`#${key}`} key={key}>
                     {label}
