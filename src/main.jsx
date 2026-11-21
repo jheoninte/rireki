@@ -22,6 +22,7 @@ import Builder from "./components/Builder";
 import Landing from "./components/Landing";
 import AuthDialog from "./components/AuthDialog";
 import MarketNavigation from './components/MarketNavigation';
+import ConsentBanner from "./components/ConsentBanner";
 import { localeFromLocation, marketHome, isEditorPath, recoveryPath } from './lib/market-routes';
 import "./styles.css";
 import "./unified.css";
@@ -447,6 +448,7 @@ if (isLegacyEditorPath(location.pathname)) {
   createRoot(appRoot).render(
     <I18nProvider locale={localeFromLocation(location)}>
       <App />
+      <ConsentBanner />
     </I18nProvider>,
   );
 }

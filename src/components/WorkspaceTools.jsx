@@ -4,6 +4,7 @@ import { Button } from './ui';
 import { useI18n } from '../i18n';
 import { commerceEnabled, invoke, readAccount, completion } from '../lib/services';
 import { partnersFor } from '../lib/affiliates';
+import { track } from '../lib/analytics';
 
 export function CloudPanel({ cloud, session, onLogin, progress, onImport, onRestore, confirmAction }) {
   const { copy, locale } = useI18n(), c = copy.workspace;
@@ -134,7 +135,7 @@ export function NextActions() {
       <span className="affiliate-label">PR</span>
       <strong>{partner.title}</strong>
       <p>{partner.description}</p>
-      {partner.links.map(link => <a key={link.href} href={link.href} target="_blank" rel="sponsored nofollow noopener noreferrer">{link.cta}<ArrowUpRight size={15}/></a>)}
+      {partner.links.map(link => <a key={link.href} href={link.href} onClick={() => track('affiliate_click', { partner: partner.id, destination: new URL(link.href).hostname })} target="_blank" rel="sponsored nofollow noopener noreferrer">{link.cta}<ArrowUpRight size={15}/></a>)}
       <small>{c.affiliateDisclosure}</small>
     </aside>)}
     <p>{c.noSharing}</p>

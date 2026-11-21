@@ -56,6 +56,7 @@ import {
   useAccount,
   completion,
 } from "./WorkspaceTools";
+import { track } from "../lib/analytics";
 
 function measureProgress(data, variant) {
   const filledItems = Object.entries(data).reduce((count, [key, value]) => {
@@ -389,6 +390,7 @@ export default function Builder({
       await exportResume(format, data, copy, {
         authenticated: Boolean(session), watermark: !session, variant, locale,
       });
+      track("resume_download", { format, template: variant, locale });
       toast(
         copy.messages.downloaded.replace(
           "{format}",
