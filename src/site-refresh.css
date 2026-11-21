@@ -53,9 +53,3 @@
 .affiliate-card a{margin-top:4px}
 .affiliate-card small{color:#6b7a72;font-size:11px;line-height:1.5}
 
-.consent-banner{position:fixed;left:16px;right:16px;bottom:16px;z-index:60;max-width:720px;margin:0 auto;display:flex;gap:14px;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;border:1px solid #cdd6c9;border-radius:12px;box-shadow:0 8px 28px rgba(37,62,52,.16);font-size:12.5px;line-height:1.6;color:#253e34}
-.consent-banner p{margin:0}.consent-banner a{color:#285c48;text-decoration:underline}
-.consent-banner div{display:flex;gap:8px;flex-shrink:0}
-.consent-banner button{min-height:36px;padding:0 14px;border-radius:8px;border:1px solid #285c48;font-weight:600;cursor:pointer;background:#fff;color:#285c48}
-.consent-banner .consent-accept{background:#285c48;color:#fff}
-@media (max-width:560px){.consent-banner{flex-direction:column;align-items:stretch}.consent-banner div{justify-content:flex-end}}
